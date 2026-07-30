@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-07-30T19:06:28.861Z",
+  "generatedAt": "2026-07-30T19:18:13.964Z",
   "stats": {
-    "files": 74,
+    "files": 76,
     "routes": 29,
-    "clientComponents": 10,
-    "serverActions": 7
+    "clientComponents": 11,
+    "serverActions": 8
   },
   "routes": [
     {
@@ -719,18 +719,49 @@
       "loc": 26
     },
     {
+      "file": "src/app/admin/(dashboard)/media/actions.ts",
+      "kind": "server-action",
+      "exports": [
+        "UploadState",
+        "uploadMedia",
+        "toggleApproveMedia",
+        "deleteMedia"
+      ],
+      "imports": [
+        "@/lib/db",
+        "@/lib/auth",
+        "@/lib/slug"
+      ],
+      "route": null,
+      "loc": 85
+    },
+    {
       "file": "src/app/admin/(dashboard)/media/page.tsx",
       "kind": "module",
       "exports": [
         "metadata",
-        "MediaPage",
         "default"
       ],
       "imports": [
-        "@/components/admin/admin-ui"
+        "@/components/admin/admin-ui",
+        "@/lib/db",
+        "./upload-form",
+        "./actions"
       ],
       "route": "/admin/media",
-      "loc": 27
+      "loc": 121
+    },
+    {
+      "file": "src/app/admin/(dashboard)/media/upload-form.tsx",
+      "kind": "client",
+      "exports": [
+        "UploadForm"
+      ],
+      "imports": [
+        "./actions"
+      ],
+      "route": null,
+      "loc": 64
     },
     {
       "file": "src/app/admin/(dashboard)/page.tsx",
