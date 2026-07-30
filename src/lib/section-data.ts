@@ -119,3 +119,68 @@ export const breakingNews = [
   { time: '07:50', title: 'One Piece Chapter 1116 Official Release Date Announced', tag: 'Manga', tone: 'green' as Tone },
   { time: '07:20', title: 'Dragon Ball DAIMA Episode 18 Preview Images', tag: 'Anime', tone: 'orange' as Tone },
 ]
+
+/* ------------------------------- Community ------------------------------ */
+
+export const communityCategories = [
+  { name: 'Discussions', sub: 'Latest topics & community talks', meta: '12.4K Topics', tone: 'purple' as Tone },
+  { name: 'Polls & Surveys', sub: 'Vote, predict & share opinions', meta: '345 Active', tone: 'blue' as Tone },
+  { name: 'Fan Clubs', sub: 'Join clubs of your favorite series', meta: '256 Clubs', tone: 'green' as Tone },
+  { name: 'Events', sub: 'Community events & watch parties', meta: '18 Upcoming', tone: 'orange' as Tone },
+  { name: 'User Content', sub: 'Fan art, cosplays & videos', meta: '9.8K Posts', tone: 'pink' as Tone },
+]
+
+export const hotDiscussions = [
+  { title: 'Welcome to Anisekai Community! Read This First', tag: 'Pinned', tone: 'primary' as Tone, author: 'Anisekai Staff', when: '3 days ago', replies: 0, views: '15.2K' },
+  { title: 'Who will win the final battle? Luffy vs Blackbeard', tag: 'Poll', tone: 'blue' as Tone, author: 'ZoroSama', when: '2 hours ago', replies: 128, views: '4.3K' },
+  { title: 'Jujutsu Kaisen Chapter 260 Spoilers Discussion', tag: 'Spoiler', tone: 'purple' as Tone, author: 'Gojo_Satoru', when: '1 hour ago', replies: 256, views: '6.8K' },
+  { title: 'The True Identity of Imu-sama! (Theory)', tag: 'Theory', tone: 'orange' as Tone, author: 'LaughTale', when: '5 hours ago', replies: 89, views: '2.1K' },
+  { title: 'Which TCG has the best meta right now?', tag: 'Discussion', tone: 'green' as Tone, author: 'CardMaster', when: '3 hours ago', replies: 74, views: '1.6K' },
+]
+
+export const onlineMembers = [
+  { name: 'Luffy_D', rank: 'MOD', tone: 'purple' as Tone },
+  { name: 'Gojo_Satoru', rank: 'SAGE', tone: 'blue' as Tone },
+  { name: 'ZoroSama', rank: 'VETERAN', tone: 'green' as Tone },
+  { name: 'Nami_Chan', rank: 'VETERAN', tone: 'green' as Tone },
+  { name: 'Itachi_Uchiha', rank: 'MEMBER', tone: 'muted' as Tone },
+  { name: 'Killua_99', rank: 'MEMBER', tone: 'muted' as Tone },
+]
+
+export const communityEvents = [
+  { date: 'MAY 24', title: 'Demon Slayer Watch Party', when: 'Sat, May 24 · 8:00 PM (UTC+8)', going: '1.2K going' },
+  { date: 'MAY 26', title: 'One Piece Chapter 1117 Live Discussion', when: 'Mon, May 26 · 9:00 PM (UTC+8)', going: '2.4K going' },
+  { date: 'JUN 01', title: 'Weekly TCG Tournament (OPTCG)', when: 'Sun, Jun 1 · 7:00 PM (UTC+8)', going: '512 going' },
+]
+
+export const communityAchievements = [
+  { name: 'Top Contributor', sub: 'Post 100+ replies', tone: 'purple' as Tone },
+  { name: 'Discussion Master', sub: 'Create 50+ topics', tone: 'blue' as Tone },
+  { name: 'Helpful User', sub: 'Receive 100+ likes', tone: 'pink' as Tone },
+  { name: 'Event Organizer', sub: 'Host 3+ events', tone: 'orange' as Tone },
+]
+
+export const featuredFanContent = [
+  { title: 'Zoro — King of Hell', author: 'ArtByHawk', likes: '1.2K', tone: 'green' as Tone },
+  { title: 'Gojo vs Sukuna', author: 'AnimeVision', likes: '2.3K', tone: 'purple' as Tone },
+  { title: 'Gear 5', author: 'OnePieceFan_25', likes: '1.8K', tone: 'primary' as Tone },
+  { title: 'Makima Cosplay', author: 'CosplayQueen', likes: '960', tone: 'pink' as Tone },
+]
+
+export const communityPoll = {
+  question: 'Who is the best main character of all time?',
+  options: [
+    { label: 'Monkey D. Luffy', pct: 38 },
+    { label: 'Goku', pct: 27 },
+    { label: 'Naruto Uzumaki', pct: 18 },
+    { label: 'Ichigo Kurosaki', pct: 9 },
+    { label: 'Other', pct: 8 },
+  ],
+  votes: '3,875 votes',
+}
+
+export const popularTags = [
+  'One Piece', 'Jujutsu Kaisen', 'Naruto', 'Demon Slayer', 'Attack on Titan',
+  'My Hero Academia', 'Bleach', 'Chainsaw Man', 'Dragon Ball', 'Anime Leaks',
+  'TCG', 'Cosplay', 'Fan Art', 'Theory', 'Watch Party',
+]
