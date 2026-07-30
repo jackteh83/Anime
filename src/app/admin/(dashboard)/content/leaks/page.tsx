@@ -1,27 +1,23 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import { FileText, Pencil, Plus, Send, Trash2, Undo2 } from 'lucide-react'
+import { Flame, Pencil, Plus, Send, Trash2, Undo2, Zap } from 'lucide-react'
 import { AdminPageHeader } from '@/components/admin/admin-ui'
 import { ContentTypeTabs } from '@/components/admin/content-type-tabs'
 import { Pill } from '@/components/ui'
 import { prisma } from '@/lib/db'
-import { PUBLISH_STATUSES, statusMeta, type PublishStatusValue } from '@/lib/content'
-import { deleteNews, setNewsStatus } from './actions'
+import {
+  PUBLISH_STATUSES,
+  leakTypeMeta,
+  statusMeta,
+  type PublishStatusValue,
+} from '@/lib/content'
+import { deleteLeak, setLeakStatus } from './actions'
 
-export const metadata: Metadata = { title: 'Content' }
+export const metadata: Metadata = { title: 'Anime Leaks' }
 
 const FILTERS = ['ALL', ...PUBLISH_STATUSES] as const
 
-function fmtDate(d: Date | null) {
-  if (!d) return '—'
-  return new Date(d).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
-}
-
-export default async function ContentPage(props: {
+export default async function LeaksPage(props: {
   searchParams: Promise<{ status?: string }>
 }) {
   const { status } = await props.searchParams
@@ -35,13 +31,12 @@ export default async function ContentPage(props: {
   }
 
   const [items, grouped] = await Promise.all([
-    prisma.news.findMany({
+    prisma.animeLeak.findMany({
       where,
       orderBy: { updatedAt: 'desc' },
-      include: { category: true, author: { select: { username: true } } },
       take: 100,
     }),
-    prisma.news.groupBy({
+    prisma.animeLeak.groupBy({
       by: ['status'],
       where: { deletedAt: null },
       _count: true,
@@ -54,22 +49,21 @@ export default async function ContentPage(props: {
   return (
     <div>
       <AdminPageHeader
-        title="Content Management"
-        subtitle="Anime Leaks · Episodes · TCG · Trends · News"
-        icon={FileText}
+        title="Anime Leaks"
+        subtitle="Manga & anime leaks, raws, spoilers and summaries"
+        icon={Zap}
         action={
           <Link
-            href="/admin/content/new"
+            href="/admin/content/leaks/new"
             className="flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-on-primary transition-colors hover:bg-primary-hover"
           >
-            <Plus className="h-4 w-4" /> New Article
+            <Plus className="h-4 w-4" /> New Leak
           </Link>
         }
       />
 
-      <ContentTypeTabs active="news" />
+      <ContentTypeTabs active="leaks" />
 
-      {/* Status filter tabs */}
       <div className="mb-4 flex flex-wrap gap-2">
         {FILTERS.map((f) => {
           const count = f === 'ALL' ? total : (counts.get(f) ?? 0)
@@ -77,7 +71,11 @@ export default async function ContentPage(props: {
           return (
             <Link
               key={f}
-              href={f === 'ALL' ? '/admin/content' : `/admin/content?status=${f}`}
+              href={
+                f === 'ALL'
+                  ? '/admin/content/leaks'
+                  : `/admin/content/leaks?status=${f}`
+              }
               className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
                 isActive
                   ? 'bg-primary text-on-primary'
@@ -94,8 +92,8 @@ export default async function ContentPage(props: {
       <div className="overflow-hidden rounded-card border border-line bg-surface">
         {items.length === 0 ? (
           <div className="p-10 text-center text-sm text-muted">
-            No articles yet.{' '}
-            <Link href="/admin/content/new" className="text-primary hover:underline">
+            No leaks yet.{' '}
+            <Link href="/admin/content/leaks/new" className="text-primary hover:underline">
               Create the first one
             </Link>
             .
@@ -105,52 +103,56 @@ export default async function ContentPage(props: {
             <thead>
               <tr className="border-b border-line text-left text-[11px] uppercase tracking-wide text-faint">
                 <th className="px-4 py-3 font-semibold">Title</th>
+                <th className="hidden px-4 py-3 font-semibold md:table-cell">Series</th>
+                <th className="px-4 py-3 font-semibold">Type</th>
                 <th className="px-4 py-3 font-semibold">Status</th>
-                <th className="hidden px-4 py-3 font-semibold md:table-cell">Category</th>
-                <th className="hidden px-4 py-3 font-semibold lg:table-cell">Author</th>
-                <th className="hidden px-4 py-3 font-semibold sm:table-cell">Updated</th>
+                <th className="hidden px-4 py-3 font-semibold sm:table-cell">Heat</th>
                 <th className="px-4 py-3 text-right font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {items.map((n) => {
-                const meta = statusMeta[n.status]
-                const published = n.status === 'PUBLISHED'
+              {items.map((l) => {
+                const meta = statusMeta[l.status]
+                const type = leakTypeMeta[l.type]
+                const published = l.status === 'PUBLISHED'
                 return (
-                  <tr key={n.id} className="border-b border-line last:border-0">
+                  <tr key={l.id} className="border-b border-line last:border-0">
                     <td className="px-4 py-3">
                       <Link
-                        href={`/admin/content/${n.id}`}
+                        href={`/admin/content/leaks/${l.id}`}
                         className="font-semibold text-text hover:text-primary"
                       >
-                        {n.title}
+                        {l.title}
                       </Link>
+                    </td>
+                    <td className="hidden px-4 py-3 text-muted md:table-cell">
+                      {l.series}
+                    </td>
+                    <td className="px-4 py-3">
+                      <Pill tone={type.tone}>{type.label}</Pill>
                     </td>
                     <td className="px-4 py-3">
                       <Pill tone={meta.tone}>{meta.label}</Pill>
                     </td>
-                    <td className="hidden px-4 py-3 text-muted md:table-cell">
-                      {n.category?.name ?? '—'}
-                    </td>
-                    <td className="hidden px-4 py-3 text-muted lg:table-cell">
-                      {n.author?.username ?? '—'}
-                    </td>
-                    <td className="hidden px-4 py-3 text-faint sm:table-cell">
-                      {fmtDate(n.updatedAt)}
+                    <td className="hidden px-4 py-3 sm:table-cell">
+                      <span className="flex items-center gap-1 text-xs font-bold text-primary">
+                        <Flame className="h-3 w-3" />
+                        {l.heat.toLocaleString()}
+                      </span>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
                         <Link
-                          href={`/admin/content/${n.id}`}
+                          href={`/admin/content/leaks/${l.id}`}
                           className="flex h-8 w-8 items-center justify-center rounded-lg text-muted hover:bg-surface-2 hover:text-text"
                           title="Edit"
                         >
                           <Pencil className="h-4 w-4" />
                         </Link>
                         <form
-                          action={setNewsStatus.bind(
+                          action={setLeakStatus.bind(
                             null,
-                            n.id,
+                            l.id,
                             published ? 'DRAFT' : 'PUBLISHED',
                           )}
                         >
@@ -166,7 +168,7 @@ export default async function ContentPage(props: {
                             )}
                           </button>
                         </form>
-                        <form action={deleteNews.bind(null, n.id)}>
+                        <form action={deleteLeak.bind(null, l.id)}>
                           <button
                             type="submit"
                             className="flex h-8 w-8 items-center justify-center rounded-lg text-muted hover:bg-surface-2 hover:text-down"
