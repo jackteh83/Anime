@@ -19,6 +19,11 @@ function getKey() {
   return new TextEncoder().encode(secret)
 }
 
+/** True when the app can sign/verify sessions (AUTH_SECRET is present). */
+export function authConfigured(): boolean {
+  return !!process.env.AUTH_SECRET
+}
+
 /* ------------------------------ passwords ------------------------------ */
 
 export function hashPassword(plain: string): Promise<string> {
@@ -71,10 +76,15 @@ export async function destroySessionCookie() {
 
 /** Reads and verifies the current session from cookies (Server Components/Actions). */
 export async function getSession(): Promise<SessionPayload | null> {
-  const store = await cookies()
-  const token = store.get(SESSION_COOKIE)?.value
-  if (!token) return null
-  return verifySession(token)
+  try {
+    const store = await cookies()
+    const token = store.get(SESSION_COOKIE)?.value
+    if (!token) return null
+    return await verifySession(token)
+  } catch {
+    // Never let a missing/invalid AUTH_SECRET or cookie crash a page render.
+    return null
+  }
 }
 
 export { STAFF_ROLES, isStaff } from './auth-roles'
