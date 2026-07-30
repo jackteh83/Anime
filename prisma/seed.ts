@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
+import bcrypt from 'bcryptjs'
 
 const adapter = new PrismaPg({
   connectionString: process.env.DIRECT_URL ?? process.env.DATABASE_URL ?? '',
@@ -63,7 +64,33 @@ async function main() {
     })
   }
 
-  console.log('Seed complete: roles, TCG games, news categories.')
+  // Super Admin account. Credentials come from env; the defaults let a fresh
+  // database work out of the box. Override ADMIN_PASSWORD in Vercel for prod.
+  const adminEmail = (process.env.ADMIN_EMAIL ?? 'admin@anisekai.com').toLowerCase()
+  const adminUsername = process.env.ADMIN_USERNAME ?? 'admin'
+  const adminPassword = process.env.ADMIN_PASSWORD ?? 'A99nime'
+
+  const superAdminRole = await prisma.role.findUniqueOrThrow({
+    where: { name: 'Super Admin' },
+  })
+  const passwordHash = await bcrypt.hash(adminPassword, 12)
+
+  await prisma.user.upsert({
+    where: { email: adminEmail },
+    update: { passwordHash, roleId: superAdminRole.id },
+    create: {
+      email: adminEmail,
+      username: adminUsername,
+      passwordHash,
+      emailVerified: new Date(),
+      roleId: superAdminRole.id,
+      profile: { create: {} },
+    },
+  })
+
+  console.log(
+    `Seed complete: roles, TCG games, news categories, Super Admin (${adminEmail}).`,
+  )
 }
 
 main()
