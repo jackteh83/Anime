@@ -12,7 +12,7 @@
     "prisma:deploy": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
     "graphify": "node scripts/graphify.mjs",
-    "vercel-build": "prisma migrate deploy && next build"
+    "vercel-build": "prisma generate && (prisma migrate deploy || echo 'graphify: no database reachable — skipping migrate, site will use seed fallbacks') && next build"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
