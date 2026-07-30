@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-07-30T19:18:13.964Z",
+  "generatedAt": "2026-07-30T19:23:10.299Z",
   "stats": {
-    "files": 76,
+    "files": 79,
     "routes": 29,
-    "clientComponents": 11,
-    "serverActions": 8
+    "clientComponents": 12,
+    "serverActions": 9
   },
   "routes": [
     {
@@ -153,7 +153,8 @@
         "Notification",
         "Bookmark",
         "Watchlist",
-        "Pet"
+        "Pet",
+        "SiteSetting"
       ],
       "enums": [
         "ContentType",
@@ -807,18 +808,52 @@
       "loc": 27
     },
     {
+      "file": "src/app/admin/(dashboard)/settings/actions.ts",
+      "kind": "server-action",
+      "exports": [
+        "SettingsState",
+        "saveGeneral",
+        "saveLocalization",
+        "saveAds"
+      ],
+      "imports": [
+        "@/lib/db",
+        "@/lib/auth",
+        "@/lib/settings"
+      ],
+      "route": null,
+      "loc": 88
+    },
+    {
       "file": "src/app/admin/(dashboard)/settings/page.tsx",
       "kind": "module",
       "exports": [
         "metadata",
-        "SettingsPage",
         "default"
       ],
       "imports": [
-        "@/components/admin/admin-ui"
+        "@/components/admin/admin-ui",
+        "@/lib/auth",
+        "@/lib/settings",
+        "./settings-forms"
       ],
       "route": "/admin/settings",
-      "loc": 27
+      "loc": 44
+    },
+    {
+      "file": "src/app/admin/(dashboard)/settings/settings-forms.tsx",
+      "kind": "client",
+      "exports": [
+        "GeneralForm",
+        "LocalizationForm",
+        "AdsForm"
+      ],
+      "imports": [
+        "@/lib/settings",
+        "./actions"
+      ],
+      "route": null,
+      "loc": 136
     },
     {
       "file": "src/app/admin/(dashboard)/users/actions.ts",
@@ -1286,6 +1321,23 @@
       ],
       "route": null,
       "loc": 187
+    },
+    {
+      "file": "src/lib/settings.ts",
+      "kind": "module",
+      "exports": [
+        "GeneralSettings",
+        "LocalizationSettings",
+        "AdsSettings",
+        "SETTING_DEFAULTS",
+        "SettingKey",
+        "getSettings"
+      ],
+      "imports": [
+        "@/lib/db"
+      ],
+      "route": null,
+      "loc": 60
     },
     {
       "file": "src/lib/slug.ts",
