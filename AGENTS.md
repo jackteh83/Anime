@@ -41,7 +41,15 @@ src/lib/            db (Prisma client), nav config, data helpers
 prisma/             schema.prisma, seed.ts, migrations/
 prisma.config.ts    Prisma 7 config (connection URLs live here, NOT in schema)
 docs/               Full product specs — the deep source of truth (read on demand)
+graphify-out/       Code knowledge graph (GRAPH_REPORT.md) — read to save tokens
+scripts/graphify.mjs  Regenerates the graph (`npm run graphify`)
 ```
+
+## Save tokens: read the graph first
+
+`graphify-out/GRAPH_REPORT.md` maps every route, module, file, and its exports,
+plus the full data model. Read it to locate code instead of grepping the whole
+tree. Regenerate with `npm run graphify` after structural changes.
 
 ## Long-term rules (non-negotiable)
 

@@ -1,0 +1,1271 @@
+{
+  "generatedAt": "2026-07-30T19:06:28.861Z",
+  "stats": {
+    "files": 74,
+    "routes": 29,
+    "clientComponents": 10,
+    "serverActions": 7
+  },
+  "routes": [
+    {
+      "route": "/",
+      "file": "src/app/(site)/page.tsx"
+    },
+    {
+      "route": "/admin",
+      "file": "src/app/admin/(dashboard)/page.tsx"
+    },
+    {
+      "route": "/admin/ai",
+      "file": "src/app/admin/(dashboard)/ai/page.tsx"
+    },
+    {
+      "route": "/admin/analytics",
+      "file": "src/app/admin/(dashboard)/analytics/page.tsx"
+    },
+    {
+      "route": "/admin/content",
+      "file": "src/app/admin/(dashboard)/content/page.tsx"
+    },
+    {
+      "route": "/admin/content/[id]",
+      "file": "src/app/admin/(dashboard)/content/[id]/page.tsx"
+    },
+    {
+      "route": "/admin/content/episodes",
+      "file": "src/app/admin/(dashboard)/content/episodes/page.tsx"
+    },
+    {
+      "route": "/admin/content/leaks",
+      "file": "src/app/admin/(dashboard)/content/leaks/page.tsx"
+    },
+    {
+      "route": "/admin/content/leaks/[id]",
+      "file": "src/app/admin/(dashboard)/content/leaks/[id]/page.tsx"
+    },
+    {
+      "route": "/admin/content/leaks/new",
+      "file": "src/app/admin/(dashboard)/content/leaks/new/page.tsx"
+    },
+    {
+      "route": "/admin/content/new",
+      "file": "src/app/admin/(dashboard)/content/new/page.tsx"
+    },
+    {
+      "route": "/admin/content/tcg",
+      "file": "src/app/admin/(dashboard)/content/tcg/page.tsx"
+    },
+    {
+      "route": "/admin/content/trends",
+      "file": "src/app/admin/(dashboard)/content/trends/page.tsx"
+    },
+    {
+      "route": "/admin/homepage",
+      "file": "src/app/admin/(dashboard)/homepage/page.tsx"
+    },
+    {
+      "route": "/admin/login",
+      "file": "src/app/admin/login/page.tsx"
+    },
+    {
+      "route": "/admin/media",
+      "file": "src/app/admin/(dashboard)/media/page.tsx"
+    },
+    {
+      "route": "/admin/scheduler",
+      "file": "src/app/admin/(dashboard)/scheduler/page.tsx"
+    },
+    {
+      "route": "/admin/seo",
+      "file": "src/app/admin/(dashboard)/seo/page.tsx"
+    },
+    {
+      "route": "/admin/settings",
+      "file": "src/app/admin/(dashboard)/settings/page.tsx"
+    },
+    {
+      "route": "/admin/users",
+      "file": "src/app/admin/(dashboard)/users/page.tsx"
+    },
+    {
+      "route": "/community",
+      "file": "src/app/(site)/community/page.tsx"
+    },
+    {
+      "route": "/episodes",
+      "file": "src/app/(site)/episodes/page.tsx"
+    },
+    {
+      "route": "/leaks",
+      "file": "src/app/(site)/leaks/page.tsx"
+    },
+    {
+      "route": "/library",
+      "file": "src/app/(site)/library/page.tsx"
+    },
+    {
+      "route": "/login",
+      "file": "src/app/(site)/login/page.tsx"
+    },
+    {
+      "route": "/news",
+      "file": "src/app/(site)/news/page.tsx"
+    },
+    {
+      "route": "/register",
+      "file": "src/app/(site)/register/page.tsx"
+    },
+    {
+      "route": "/tcg",
+      "file": "src/app/(site)/tcg/page.tsx"
+    },
+    {
+      "route": "/trends",
+      "file": "src/app/(site)/trends/page.tsx"
+    }
+  ],
+  "nodes": [
+    {
+      "file": "prisma/schema.prisma",
+      "kind": "prisma",
+      "models": [
+        "Role",
+        "Permission",
+        "RolePermission",
+        "User",
+        "UserProfile",
+        "Category",
+        "Tag",
+        "Tagging",
+        "Anime",
+        "Episode",
+        "AnimeLeak",
+        "News",
+        "TcgGame",
+        "Card",
+        "Deck",
+        "Trend",
+        "Media",
+        "AiJob",
+        "AiLog",
+        "RssSource",
+        "ApiSource",
+        "Notification",
+        "Bookmark",
+        "Watchlist",
+        "Pet"
+      ],
+      "enums": [
+        "ContentType",
+        "PublishStatus",
+        "LeakType",
+        "LeakStatus",
+        "EpisodeStatus",
+        "MediaType",
+        "AiJobType",
+        "AiJobStatus",
+        "SourceType",
+        "NotificationType",
+        "TargetType"
+      ],
+      "exports": [],
+      "imports": [],
+      "route": null
+    },
+    {
+      "file": "prisma/seed.ts",
+      "kind": "module",
+      "exports": [],
+      "imports": [],
+      "route": null,
+      "loc": 104
+    },
+    {
+      "file": "src/app/(site)/auth-actions.ts",
+      "kind": "server-action",
+      "exports": [
+        "AuthState",
+        "registerMember",
+        "loginMember",
+        "logoutMember"
+      ],
+      "imports": [
+        "@/lib/db",
+        "@/lib/auth"
+      ],
+      "route": null,
+      "loc": 118
+    },
+    {
+      "file": "src/app/(site)/community/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "CommunityPage",
+        "default"
+      ],
+      "imports": [
+        "@/components/section-hero",
+        "@/components/ui",
+        "@/lib/section-data"
+      ],
+      "route": "/community",
+      "loc": 184
+    },
+    {
+      "file": "src/app/(site)/episodes/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "EpisodesPage",
+        "default"
+      ],
+      "imports": [
+        "@/components/section-hero",
+        "@/components/ui",
+        "@/lib/section-data"
+      ],
+      "route": "/episodes",
+      "loc": 127
+    },
+    {
+      "file": "src/app/(site)/layout.tsx",
+      "kind": "module",
+      "exports": [
+        "default"
+      ],
+      "imports": [
+        "@/components/site-header",
+        "@/components/site-footer",
+        "@/lib/auth"
+      ],
+      "route": null,
+      "loc": 20
+    },
+    {
+      "file": "src/app/(site)/leaks/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "dynamic",
+        "default"
+      ],
+      "imports": [
+        "@/components/section-hero",
+        "@/components/ui",
+        "@/lib/db",
+        "@/lib/content",
+        "@/lib/homepage-data"
+      ],
+      "route": "/leaks",
+      "loc": 193
+    },
+    {
+      "file": "src/app/(site)/library/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "dynamic",
+        "default"
+      ],
+      "imports": [
+        "@/lib/auth",
+        "@/lib/db",
+        "@/components/ui"
+      ],
+      "route": "/library",
+      "loc": 200
+    },
+    {
+      "file": "src/app/(site)/login/login-form.tsx",
+      "kind": "client",
+      "exports": [
+        "MemberLoginForm"
+      ],
+      "imports": [
+        "../auth-actions"
+      ],
+      "route": null,
+      "loc": 54
+    },
+    {
+      "file": "src/app/(site)/login/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "dynamic",
+        "default"
+      ],
+      "imports": [
+        "@/lib/auth",
+        "@/components/logo",
+        "./login-form"
+      ],
+      "route": "/login",
+      "loc": 24
+    },
+    {
+      "file": "src/app/(site)/news/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "dynamic",
+        "default"
+      ],
+      "imports": [
+        "@/components/section-hero",
+        "@/components/ui",
+        "@/lib/db",
+        "@/lib/section-data",
+        "@/lib/homepage-data"
+      ],
+      "route": "/news",
+      "loc": 160
+    },
+    {
+      "file": "src/app/(site)/page.tsx",
+      "kind": "module",
+      "exports": [
+        "HomePage",
+        "default"
+      ],
+      "imports": [
+        "@/components/ui",
+        "@/lib/homepage-data"
+      ],
+      "route": "/",
+      "loc": 539
+    },
+    {
+      "file": "src/app/(site)/register/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "dynamic",
+        "default"
+      ],
+      "imports": [
+        "@/lib/auth",
+        "@/components/logo",
+        "./register-form"
+      ],
+      "route": "/register",
+      "loc": 24
+    },
+    {
+      "file": "src/app/(site)/register/register-form.tsx",
+      "kind": "client",
+      "exports": [
+        "RegisterForm"
+      ],
+      "imports": [
+        "../auth-actions"
+      ],
+      "route": null,
+      "loc": 58
+    },
+    {
+      "file": "src/app/(site)/tcg/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "TcgPage",
+        "default"
+      ],
+      "imports": [
+        "@/components/section-hero",
+        "@/components/ui",
+        "@/lib/section-data",
+        "@/lib/homepage-data"
+      ],
+      "route": "/tcg",
+      "loc": 179
+    },
+    {
+      "file": "src/app/(site)/trends/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "TrendsPage",
+        "default"
+      ],
+      "imports": [
+        "@/components/section-hero",
+        "@/components/ui",
+        "@/lib/section-data"
+      ],
+      "route": "/trends",
+      "loc": 129
+    },
+    {
+      "file": "src/app/admin/(dashboard)/ai/actions.ts",
+      "kind": "server-action",
+      "exports": [
+        "AiRunState",
+        "runAiTask",
+        "approveAiJob",
+        "rejectAiJob"
+      ],
+      "imports": [
+        "@/lib/db",
+        "@/lib/auth",
+        "@/lib/ai",
+        "@/lib/ai/config",
+        "@/lib/ai/tasks"
+      ],
+      "route": null,
+      "loc": 128
+    },
+    {
+      "file": "src/app/admin/(dashboard)/ai/ai-runner.tsx",
+      "kind": "client",
+      "exports": [
+        "AiRunner"
+      ],
+      "imports": [
+        "@/lib/ai/tasks",
+        "@/lib/ai/config",
+        "./actions"
+      ],
+      "route": null,
+      "loc": 115
+    },
+    {
+      "file": "src/app/admin/(dashboard)/ai/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "default"
+      ],
+      "imports": [
+        "@/components/admin/admin-ui",
+        "@/components/ui",
+        "@/lib/db",
+        "@/lib/ai/config",
+        "./ai-runner",
+        "./actions"
+      ],
+      "route": "/admin/ai",
+      "loc": 162
+    },
+    {
+      "file": "src/app/admin/(dashboard)/analytics/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "AnalyticsPage",
+        "default"
+      ],
+      "imports": [
+        "@/components/admin/admin-ui"
+      ],
+      "route": "/admin/analytics",
+      "loc": 27
+    },
+    {
+      "file": "src/app/admin/(dashboard)/content/[id]/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "default"
+      ],
+      "imports": [
+        "@/components/admin/admin-ui",
+        "@/lib/db",
+        "../news-form",
+        "../actions"
+      ],
+      "route": "/admin/content/[id]",
+      "loc": 53
+    },
+    {
+      "file": "src/app/admin/(dashboard)/content/actions.ts",
+      "kind": "server-action",
+      "exports": [
+        "ContentFormState",
+        "createNews",
+        "updateNews",
+        "setNewsStatus",
+        "deleteNews"
+      ],
+      "imports": [
+        "@/lib/db",
+        "@/lib/auth",
+        "@/lib/slug",
+        "@/lib/content"
+      ],
+      "route": null,
+      "loc": 142
+    },
+    {
+      "file": "src/app/admin/(dashboard)/content/ai-actions.ts",
+      "kind": "server-action",
+      "exports": [
+        "AssistResult",
+        "assistContent"
+      ],
+      "imports": [
+        "@/lib/db",
+        "@/lib/auth",
+        "@/lib/ai",
+        "@/lib/ai/tasks"
+      ],
+      "route": null,
+      "loc": 76
+    },
+    {
+      "file": "src/app/admin/(dashboard)/content/episodes/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "EpisodesContentPage",
+        "default"
+      ],
+      "imports": [
+        "@/components/admin/admin-ui",
+        "@/components/admin/content-type-tabs"
+      ],
+      "route": "/admin/content/episodes",
+      "loc": 29
+    },
+    {
+      "file": "src/app/admin/(dashboard)/content/leaks/[id]/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "default"
+      ],
+      "imports": [
+        "@/components/admin/admin-ui",
+        "@/lib/db",
+        "../leak-form",
+        "../actions"
+      ],
+      "route": "/admin/content/leaks/[id]",
+      "loc": 40
+    },
+    {
+      "file": "src/app/admin/(dashboard)/content/leaks/actions.ts",
+      "kind": "server-action",
+      "exports": [
+        "LeakFormState",
+        "createLeak",
+        "updateLeak",
+        "setLeakStatus",
+        "deleteLeak"
+      ],
+      "imports": [
+        "@/lib/db",
+        "@/lib/auth",
+        "@/lib/slug",
+        "@/lib/content"
+      ],
+      "route": null,
+      "loc": 149
+    },
+    {
+      "file": "src/app/admin/(dashboard)/content/leaks/leak-form.tsx",
+      "kind": "client",
+      "exports": [
+        "LeakInitial",
+        "LeakForm"
+      ],
+      "imports": [
+        "@/lib/content",
+        "./actions"
+      ],
+      "route": null,
+      "loc": 188
+    },
+    {
+      "file": "src/app/admin/(dashboard)/content/leaks/new/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "NewLeakPage",
+        "default"
+      ],
+      "imports": [
+        "@/components/admin/admin-ui",
+        "../leak-form",
+        "../actions"
+      ],
+      "route": "/admin/content/leaks/new",
+      "loc": 17
+    },
+    {
+      "file": "src/app/admin/(dashboard)/content/leaks/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "default"
+      ],
+      "imports": [
+        "@/components/admin/admin-ui",
+        "@/components/admin/content-type-tabs",
+        "@/components/ui",
+        "@/lib/db",
+        "@/lib/content",
+        "./actions"
+      ],
+      "route": "/admin/content/leaks",
+      "loc": 192
+    },
+    {
+      "file": "src/app/admin/(dashboard)/content/new/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "default"
+      ],
+      "imports": [
+        "@/components/admin/admin-ui",
+        "@/lib/db",
+        "../news-form",
+        "../actions"
+      ],
+      "route": "/admin/content/new",
+      "loc": 28
+    },
+    {
+      "file": "src/app/admin/(dashboard)/content/news-form.tsx",
+      "kind": "client",
+      "exports": [
+        "NewsInitial",
+        "NewsForm"
+      ],
+      "imports": [
+        "@/lib/content",
+        "./actions",
+        "./ai-actions"
+      ],
+      "route": null,
+      "loc": 259
+    },
+    {
+      "file": "src/app/admin/(dashboard)/content/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "default"
+      ],
+      "imports": [
+        "@/components/admin/admin-ui",
+        "@/components/admin/content-type-tabs",
+        "@/components/ui",
+        "@/lib/db",
+        "@/lib/content",
+        "./actions"
+      ],
+      "route": "/admin/content",
+      "loc": 190
+    },
+    {
+      "file": "src/app/admin/(dashboard)/content/tcg/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "TcgContentPage",
+        "default"
+      ],
+      "imports": [
+        "@/components/admin/admin-ui",
+        "@/components/admin/content-type-tabs"
+      ],
+      "route": "/admin/content/tcg",
+      "loc": 29
+    },
+    {
+      "file": "src/app/admin/(dashboard)/content/trends/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "TrendsContentPage",
+        "default"
+      ],
+      "imports": [
+        "@/components/admin/admin-ui",
+        "@/components/admin/content-type-tabs"
+      ],
+      "route": "/admin/content/trends",
+      "loc": 29
+    },
+    {
+      "file": "src/app/admin/(dashboard)/homepage/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "HomepageBuilderPage",
+        "default"
+      ],
+      "imports": [
+        "@/components/admin/admin-ui"
+      ],
+      "route": "/admin/homepage",
+      "loc": 27
+    },
+    {
+      "file": "src/app/admin/(dashboard)/layout.tsx",
+      "kind": "module",
+      "exports": [
+        "default"
+      ],
+      "imports": [
+        "@/lib/auth",
+        "@/components/admin/admin-sidebar",
+        "@/components/admin/admin-topbar"
+      ],
+      "route": null,
+      "loc": 26
+    },
+    {
+      "file": "src/app/admin/(dashboard)/media/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "MediaPage",
+        "default"
+      ],
+      "imports": [
+        "@/components/admin/admin-ui"
+      ],
+      "route": "/admin/media",
+      "loc": 27
+    },
+    {
+      "file": "src/app/admin/(dashboard)/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "default"
+      ],
+      "imports": [
+        "@/components/admin/admin-ui",
+        "@/lib/auth",
+        "@/lib/db"
+      ],
+      "route": "/admin",
+      "loc": 188
+    },
+    {
+      "file": "src/app/admin/(dashboard)/scheduler/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "SchedulerPage",
+        "default"
+      ],
+      "imports": [
+        "@/components/admin/admin-ui"
+      ],
+      "route": "/admin/scheduler",
+      "loc": 27
+    },
+    {
+      "file": "src/app/admin/(dashboard)/seo/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "SeoPage",
+        "default"
+      ],
+      "imports": [
+        "@/components/admin/admin-ui"
+      ],
+      "route": "/admin/seo",
+      "loc": 27
+    },
+    {
+      "file": "src/app/admin/(dashboard)/settings/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "SettingsPage",
+        "default"
+      ],
+      "imports": [
+        "@/components/admin/admin-ui"
+      ],
+      "route": "/admin/settings",
+      "loc": 27
+    },
+    {
+      "file": "src/app/admin/(dashboard)/users/actions.ts",
+      "kind": "server-action",
+      "exports": [
+        "setUserRole",
+        "deactivateUser",
+        "restoreUser"
+      ],
+      "imports": [
+        "@/lib/db",
+        "@/lib/auth"
+      ],
+      "route": null,
+      "loc": 52
+    },
+    {
+      "file": "src/app/admin/(dashboard)/users/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "default"
+      ],
+      "imports": [
+        "@/components/admin/admin-ui",
+        "@/components/ui",
+        "@/lib/db",
+        "@/lib/auth",
+        "./role-select",
+        "./actions"
+      ],
+      "route": "/admin/users",
+      "loc": 150
+    },
+    {
+      "file": "src/app/admin/(dashboard)/users/role-select.tsx",
+      "kind": "client",
+      "exports": [
+        "RoleSelect"
+      ],
+      "imports": [
+        "./actions"
+      ],
+      "route": null,
+      "loc": 45
+    },
+    {
+      "file": "src/app/admin/actions.ts",
+      "kind": "server-action",
+      "exports": [
+        "LoginState",
+        "login",
+        "logout"
+      ],
+      "imports": [
+        "@/lib/db",
+        "@/lib/auth"
+      ],
+      "route": null,
+      "loc": 68
+    },
+    {
+      "file": "src/app/admin/login/login-form.tsx",
+      "kind": "client",
+      "exports": [
+        "LoginForm"
+      ],
+      "imports": [
+        "../actions"
+      ],
+      "route": null,
+      "loc": 72
+    },
+    {
+      "file": "src/app/admin/login/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "default"
+      ],
+      "imports": [
+        "@/lib/auth",
+        "@/components/logo",
+        "./login-form"
+      ],
+      "route": "/admin/login",
+      "loc": 42
+    },
+    {
+      "file": "src/app/layout.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "RootLayout",
+        "default"
+      ],
+      "imports": [
+        "./globals.css"
+      ],
+      "route": null,
+      "loc": 29
+    },
+    {
+      "file": "src/components/admin/admin-sidebar.tsx",
+      "kind": "client",
+      "exports": [
+        "AdminSidebar"
+      ],
+      "imports": [
+        "@/lib/admin-nav",
+        "@/components/logo"
+      ],
+      "route": null,
+      "loc": 45
+    },
+    {
+      "file": "src/components/admin/admin-topbar.tsx",
+      "kind": "module",
+      "exports": [
+        "AdminTopbar"
+      ],
+      "imports": [
+        "@/app/admin/actions",
+        "@/lib/auth"
+      ],
+      "route": null,
+      "loc": 53
+    },
+    {
+      "file": "src/components/admin/admin-ui.tsx",
+      "kind": "module",
+      "exports": [
+        "AdminPageHeader",
+        "StatCard",
+        "Panel",
+        "ModulePlaceholder"
+      ],
+      "imports": [],
+      "route": null,
+      "loc": 127
+    },
+    {
+      "file": "src/components/admin/content-type-tabs.tsx",
+      "kind": "module",
+      "exports": [
+        "ContentTypeTabs"
+      ],
+      "imports": [
+        "@/lib/content"
+      ],
+      "route": null,
+      "loc": 27
+    },
+    {
+      "file": "src/components/logo.tsx",
+      "kind": "module",
+      "exports": [
+        "Logo"
+      ],
+      "imports": [],
+      "route": null,
+      "loc": 23
+    },
+    {
+      "file": "src/components/section-hero.tsx",
+      "kind": "module",
+      "exports": [
+        "SectionHero",
+        "SectionTabs"
+      ],
+      "imports": [],
+      "route": null,
+      "loc": 79
+    },
+    {
+      "file": "src/components/site-footer.tsx",
+      "kind": "module",
+      "exports": [
+        "SiteFooter"
+      ],
+      "imports": [
+        "@/lib/nav",
+        "./logo"
+      ],
+      "route": null,
+      "loc": 62
+    },
+    {
+      "file": "src/components/site-header.tsx",
+      "kind": "client",
+      "exports": [
+        "SiteHeader"
+      ],
+      "imports": [
+        "@/lib/nav",
+        "@/app/(site)/auth-actions",
+        "@/lib/auth-roles",
+        "./logo",
+        "./theme-toggle"
+      ],
+      "route": null,
+      "loc": 170
+    },
+    {
+      "file": "src/components/theme-toggle.tsx",
+      "kind": "client",
+      "exports": [
+        "ThemeToggle"
+      ],
+      "imports": [],
+      "route": null,
+      "loc": 45
+    },
+    {
+      "file": "src/components/ui.tsx",
+      "kind": "module",
+      "exports": [
+        "Tone",
+        "Pill",
+        "Widget",
+        "Thumb",
+        "StatChange"
+      ],
+      "imports": [],
+      "route": null,
+      "loc": 138
+    },
+    {
+      "file": "src/lib/admin-nav.ts",
+      "kind": "module",
+      "exports": [
+        "AdminNavItem",
+        "adminNav"
+      ],
+      "imports": [],
+      "route": null,
+      "loc": 34
+    },
+    {
+      "file": "src/lib/ai/config.ts",
+      "kind": "module",
+      "exports": [
+        "PROVIDERS",
+        "PROVIDER_IDS",
+        "isProviderId",
+        "providerConfigured",
+        "resolveProvider"
+      ],
+      "imports": [
+        "./types"
+      ],
+      "route": null,
+      "loc": 67
+    },
+    {
+      "file": "src/lib/ai/index.ts",
+      "kind": "module",
+      "exports": [
+        "runProvider",
+        "PROVIDERS",
+        "PROVIDER_IDS",
+        "providerConfigured",
+        "resolveProvider"
+      ],
+      "imports": [
+        "./types",
+        "./config",
+        "./providers/anthropic",
+        "./providers/gemini",
+        "./providers/openai-compatible"
+      ],
+      "route": null,
+      "loc": 35
+    },
+    {
+      "file": "src/lib/ai/providers/anthropic.ts",
+      "kind": "module",
+      "exports": [
+        "anthropicAdapter"
+      ],
+      "imports": [
+        "../types"
+      ],
+      "route": null,
+      "loc": 38
+    },
+    {
+      "file": "src/lib/ai/providers/gemini.ts",
+      "kind": "module",
+      "exports": [
+        "geminiAdapter"
+      ],
+      "imports": [
+        "../types"
+      ],
+      "route": null,
+      "loc": 49
+    },
+    {
+      "file": "src/lib/ai/providers/openai-compatible.ts",
+      "kind": "module",
+      "exports": [
+        "openAiCompatibleAdapter"
+      ],
+      "imports": [
+        "../types"
+      ],
+      "route": null,
+      "loc": 57
+    },
+    {
+      "file": "src/lib/ai/tasks.ts",
+      "kind": "module",
+      "exports": [
+        "AI_TASKS",
+        "AiTask",
+        "aiTaskMeta",
+        "buildPrompt"
+      ],
+      "imports": [],
+      "route": null,
+      "loc": 43
+    },
+    {
+      "file": "src/lib/ai/types.ts",
+      "kind": "module",
+      "exports": [
+        "AiProviderId",
+        "GenerateInput",
+        "GenerateResult",
+        "ResolvedProvider",
+        "AiAdapter"
+      ],
+      "imports": [],
+      "route": null,
+      "loc": 36
+    },
+    {
+      "file": "src/lib/auth-roles.ts",
+      "kind": "module",
+      "exports": [
+        "STAFF_ROLES",
+        "isStaff"
+      ],
+      "imports": [],
+      "route": null,
+      "loc": 16
+    },
+    {
+      "file": "src/lib/auth.ts",
+      "kind": "module",
+      "exports": [
+        "SESSION_COOKIE",
+        "SessionPayload",
+        "hashPassword",
+        "verifyPassword",
+        "signSession",
+        "verifySession",
+        "createSessionCookie",
+        "destroySessionCookie",
+        "getSession",
+        "STAFF_ROLES",
+        "isStaff"
+      ],
+      "imports": [],
+      "route": null,
+      "loc": 81
+    },
+    {
+      "file": "src/lib/content.ts",
+      "kind": "module",
+      "exports": [
+        "PUBLISH_STATUSES",
+        "PublishStatusValue",
+        "statusMeta",
+        "statusLabel",
+        "LEAK_TYPES",
+        "LeakTypeValue",
+        "leakTypeMeta",
+        "LEAK_STATUSES",
+        "LeakStatusValue",
+        "leakStatusMeta",
+        "CONTENT_TYPES",
+        "ContentTypeKey"
+      ],
+      "imports": [
+        "@/components/ui"
+      ],
+      "route": null,
+      "loc": 71
+    },
+    {
+      "file": "src/lib/db.ts",
+      "kind": "module",
+      "exports": [
+        "prisma"
+      ],
+      "imports": [],
+      "route": null,
+      "loc": 22
+    },
+    {
+      "file": "src/lib/homepage-data.ts",
+      "kind": "module",
+      "exports": [
+        "todaysTrend",
+        "heroPreviews",
+        "leakTimeline",
+        "episodeHubList",
+        "tcgReleases",
+        "marketWatch",
+        "topMeta",
+        "communityPredictions",
+        "leakerAccuracy",
+        "latestNews",
+        "topHotCards"
+      ],
+      "imports": [
+        "@/components/ui"
+      ],
+      "route": null,
+      "loc": 84
+    },
+    {
+      "file": "src/lib/nav.ts",
+      "kind": "module",
+      "exports": [
+        "NavItem",
+        "mainNav",
+        "footerNav"
+      ],
+      "imports": [],
+      "route": null,
+      "loc": 89
+    },
+    {
+      "file": "src/lib/section-data.ts",
+      "kind": "module",
+      "exports": [
+        "upcomingEpisodes",
+        "currentlyAiring",
+        "recentlyAired",
+        "topRatedWeek",
+        "tcgGames",
+        "metaDecks",
+        "cardReveals",
+        "trendingCards",
+        "upcomingTournaments",
+        "trendingTop10",
+        "trendingKeywords",
+        "trendByCategory",
+        "newsCategories",
+        "breakingNews",
+        "communityCategories",
+        "hotDiscussions",
+        "onlineMembers",
+        "communityEvents",
+        "communityAchievements",
+        "featuredFanContent",
+        "communityPoll",
+        "popularTags"
+      ],
+      "imports": [
+        "@/components/ui"
+      ],
+      "route": null,
+      "loc": 187
+    },
+    {
+      "file": "src/lib/slug.ts",
+      "kind": "module",
+      "exports": [
+        "slugify",
+        "uniqueSlug"
+      ],
+      "imports": [],
+      "route": null,
+      "loc": 17
+    }
+  ]
+}

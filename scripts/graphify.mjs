@@ -1,0 +1,200 @@
+#!/usr/bin/env node
+/**
+ * graphify — build a token-saving code knowledge graph for Anisekai.
+ *
+ * Scans src/ and prisma/, extracts each file's exports, local imports, and
+ * (for App Router files) its route, then writes:
+ *   graphify-out/GRAPH_REPORT.md   human-readable architecture map
+ *   graphify-out/graph.json        machine-readable graph
+ *
+ * The point is token economy: a future agent reads GRAPH_REPORT.md to learn the
+ * codebase layout and where things live, instead of grepping every source file.
+ * Run with `npm run graphify` after structural changes.
+ */
+import { readdirSync, readFileSync, writeFileSync, mkdirSync, statSync } from 'node:fs'
+import { join, relative, sep } from 'node:path'
+
+const ROOT = process.cwd()
+const SCAN = ['src', 'prisma']
+const EXCLUDE = new Set(['node_modules', '.next', 'graphify-out', 'migrations'])
+const CODE_EXT = /\.(ts|tsx|mjs|js)$/
+const OUT_DIR = join(ROOT, 'graphify-out')
+
+/* ------------------------------ file walk ------------------------------- */
+
+function walk(dir, acc = []) {
+  for (const name of readdirSync(dir)) {
+    if (EXCLUDE.has(name)) continue
+    const full = join(dir, name)
+    const st = statSync(full)
+    if (st.isDirectory()) walk(full, acc)
+    else acc.push(full)
+  }
+  return acc
+}
+
+/* --------------------------- symbol extraction -------------------------- */
+
+function extractExports(src) {
+  const out = new Set()
+  const re =
+    /export\s+(?:async\s+)?(?:default\s+)?(?:const|function|class|type|interface|enum)\s+([A-Za-z0-9_]+)/g
+  let m
+  while ((m = re.exec(src))) out.add(m[1])
+  // export { a, b as c }
+  const re2 = /export\s*\{([^}]+)\}/g
+  while ((m = re2.exec(src))) {
+    for (const part of m[1].split(',')) {
+      const name = part.trim().split(/\s+as\s+/).pop()?.trim()
+      if (name) out.add(name)
+    }
+  }
+  if (/export\s+default\s+(?:function|class|async)/.test(src)) out.add('default')
+  return [...out]
+}
+
+function extractLocalImports(src) {
+  const out = new Set()
+  const re = /import[^'"]*['"](@\/[^'"]+|\.[^'"]+)['"]/g
+  let m
+  while ((m = re.exec(src))) out.add(m[1])
+  return [...out]
+}
+
+/** Derive an App Router URL path from a file under src/app. */
+function routeFor(rel) {
+  if (!rel.startsWith(`src${sep}app${sep}`)) return null
+  const base = rel.split('/page.tsx')[0]
+  if (!rel.endsWith('page.tsx')) return null
+  let p = base
+    .replace(`src${sep}app`, '')
+    .split(sep)
+    .filter((s) => s && !(s.startsWith('(') && s.endsWith(')')))
+    .join('/')
+  p = '/' + p
+  return p === '/' ? '/' : p.replace(/\/$/, '')
+}
+
+/* -------------------------------- build --------------------------------- */
+
+const files = SCAN.flatMap((d) => {
+  try {
+    return walk(join(ROOT, d))
+  } catch {
+    return []
+  }
+})
+
+const nodes = []
+for (const full of files) {
+  const rel = relative(ROOT, full).split(sep).join('/')
+  if (rel.endsWith('.prisma')) {
+    const src = readFileSync(full, 'utf8')
+    const models = [...src.matchAll(/^model\s+(\w+)/gm)].map((m) => m[1])
+    const enums = [...src.matchAll(/^enum\s+(\w+)/gm)].map((m) => m[1])
+    nodes.push({ file: rel, kind: 'prisma', models, enums, exports: [], imports: [], route: null })
+    continue
+  }
+  if (!CODE_EXT.test(rel)) continue
+  const src = readFileSync(full, 'utf8')
+  const isClient = /^['"]use client['"]/m.test(src)
+  const isServer = /^['"]use server['"]/m.test(src)
+  nodes.push({
+    file: rel,
+    kind: isServer ? 'server-action' : isClient ? 'client' : 'module',
+    exports: extractExports(src),
+    imports: extractLocalImports(src),
+    route: routeFor(rel),
+    loc: src.split('\n').length,
+  })
+}
+
+nodes.sort((a, b) => a.file.localeCompare(b.file))
+
+/* group by top module dir (src/app/(site), src/app/admin, src/components, src/lib, prisma) */
+function moduleOf(file) {
+  if (file.startsWith('prisma/')) return 'prisma'
+  const parts = file.split('/')
+  if (file.startsWith('src/app/admin')) return 'src/app/admin'
+  if (file.startsWith('src/app/(site)')) return 'src/app/(site)'
+  if (file.startsWith('src/app')) return 'src/app'
+  return parts.slice(0, 2).join('/')
+}
+
+const groups = {}
+for (const n of nodes) {
+  const g = moduleOf(n.file)
+  ;(groups[g] ??= []).push(n)
+}
+
+const routes = nodes.filter((n) => n.route).map((n) => ({ route: n.route, file: n.file }))
+routes.sort((a, b) => a.route.localeCompare(b.route))
+
+/* ------------------------------- emit ----------------------------------- */
+
+mkdirSync(OUT_DIR, { recursive: true })
+
+const graph = {
+  generatedAt: new Date().toISOString(),
+  stats: {
+    files: nodes.length,
+    routes: routes.length,
+    clientComponents: nodes.filter((n) => n.kind === 'client').length,
+    serverActions: nodes.filter((n) => n.kind === 'server-action').length,
+  },
+  routes,
+  nodes,
+}
+writeFileSync(join(OUT_DIR, 'graph.json'), JSON.stringify(graph, null, 2))
+
+const lines = []
+lines.push('# Anisekai — Code Knowledge Graph')
+lines.push('')
+lines.push('> Auto-generated by `npm run graphify`. Read this instead of grepping')
+lines.push('> the whole tree: it maps every module, file, its exports, and routes.')
+lines.push('')
+lines.push(
+  `**Files:** ${graph.stats.files} · **Routes:** ${graph.stats.routes} · ` +
+    `**Client components:** ${graph.stats.clientComponents} · ` +
+    `**Server-action files:** ${graph.stats.serverActions}`,
+)
+lines.push('')
+
+lines.push('## Route map')
+lines.push('')
+lines.push('| Route | File |')
+lines.push('| --- | --- |')
+for (const r of routes) lines.push(`| \`${r.route}\` | ${r.file} |`)
+lines.push('')
+
+const prismaNode = nodes.find((n) => n.kind === 'prisma')
+if (prismaNode) {
+  lines.push('## Data model (prisma)')
+  lines.push('')
+  lines.push(`**Models (${prismaNode.models.length}):** ${prismaNode.models.join(', ')}`)
+  lines.push('')
+  lines.push(`**Enums (${prismaNode.enums.length}):** ${prismaNode.enums.join(', ')}`)
+  lines.push('')
+}
+
+lines.push('## Modules')
+lines.push('')
+for (const g of Object.keys(groups).sort()) {
+  lines.push(`### ${g}`)
+  lines.push('')
+  for (const n of groups[g]) {
+    if (n.kind === 'prisma') continue
+    const tag =
+      n.kind === 'client' ? ' `client`' : n.kind === 'server-action' ? ' `server`' : ''
+    const exp = n.exports.length ? ` — exports: ${n.exports.join(', ')}` : ''
+    const route = n.route ? ` (route \`${n.route}\`)` : ''
+    lines.push(`- **${n.file}**${tag}${route}${exp}`)
+  }
+  lines.push('')
+}
+
+writeFileSync(join(OUT_DIR, 'GRAPH_REPORT.md'), lines.join('\n'))
+
+console.log(
+  `graphify: ${graph.stats.files} files, ${graph.stats.routes} routes -> graphify-out/`,
+)
