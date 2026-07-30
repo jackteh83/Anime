@@ -1,0 +1,536 @@
+// Anisekai database schema — Prisma 7 + Postgres (Neon) via @prisma/adapter-pg.
+// Design rules (see docs/06_Database_Design): UUID PKs, FK relations, soft delete
+// (deletedAt) where appropriate, audit fields (createdAt/updatedAt), and a modular
+// shape that lets future modules (Virtual Pet, Marketplace, Forum) plug in without
+// redesign.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // Prisma 7: connection URLs live in prisma.config.ts (migrate) and the
+  // @prisma/adapter-pg adapter passed to PrismaClient (runtime).
+  provider = "postgresql"
+}
+
+/* ------------------------------------------------------------------ */
+/* Enums                                                              */
+/* ------------------------------------------------------------------ */
+
+enum ContentType {
+  ANIME
+  EPISODE
+  LEAK
+  NEWS
+  TCG
+  TREND
+}
+
+enum PublishStatus {
+  DRAFT
+  PENDING_REVIEW
+  SCHEDULED
+  PUBLISHED
+  ARCHIVED
+}
+
+enum LeakType {
+  MANGA
+  ANIME
+  RAWS
+  SPOILERS
+  CONFIRMED
+  SUMMARY
+}
+
+enum LeakStatus {
+  RUMORED
+  EARLY
+  CONFIRMED
+  RELEASED
+}
+
+enum EpisodeStatus {
+  UPCOMING
+  AIRING
+  RELEASED
+  DELAYED
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  FILE
+  AI_IMAGE
+}
+
+enum AiJobType {
+  COLLECT
+  CLASSIFY
+  DEDUPE
+  SUMMARY
+  REWRITE
+  TRANSLATE
+  SEO
+  IMAGE
+}
+
+enum AiJobStatus {
+  WAITING
+  RUNNING
+  COMPLETED
+  FAILED
+  PENDING_REVIEW
+  PUBLISHED
+}
+
+enum SourceType {
+  RSS
+  API
+  WEBSITE
+  SOCIAL
+}
+
+enum NotificationType {
+  SYSTEM
+  LEAK
+  EPISODE
+  TCG
+  COMMUNITY
+  REMINDER
+}
+
+enum TargetType {
+  ANIME
+  EPISODE
+  LEAK
+  NEWS
+  CARD
+  DECK
+}
+
+/* ------------------------------------------------------------------ */
+/* Access control: Users, Roles, Permissions, Profiles               */
+/* ------------------------------------------------------------------ */
+
+model Role {
+  id          String           @id @default(uuid())
+  name        String           @unique // Super Admin, Administrator, Editor, Moderator, Author, Member
+  description String?
+  isSystem    Boolean          @default(false)
+  users       User[]
+  permissions RolePermission[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model Permission {
+  id        String           @id @default(uuid())
+  key       String           @unique // e.g. "content.publish", "users.manage"
+  label     String
+  roles     RolePermission[]
+  createdAt DateTime         @default(now())
+}
+
+model RolePermission {
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  roleId       String
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  permissionId String
+
+  @@id([roleId, permissionId])
+}
+
+model User {
+  id            String        @id @default(uuid())
+  email         String        @unique
+  username      String        @unique
+  passwordHash  String?
+  emailVerified DateTime?
+  role          Role          @relation(fields: [roleId], references: [id])
+  roleId        String
+  profile       UserProfile?
+  media         Media[]       @relation("MediaUploader")
+  news          News[]        @relation("NewsAuthor")
+  notifications Notification[]
+  bookmarks     Bookmark[]
+  watchlist     Watchlist[]
+  pet           Pet?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
+
+  @@index([roleId])
+}
+
+model UserProfile {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @unique
+  avatarUrl String?
+  bio       String?
+  level     Int      @default(1)
+  exp       Int      @default(0)
+  badges    Json     @default("[]")
+  privacy   Json     @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/* ------------------------------------------------------------------ */
+/* Taxonomy                                                          */
+/* ------------------------------------------------------------------ */
+
+model Category {
+  id       String      @id @default(uuid())
+  name     String
+  slug     String      @unique
+  type     ContentType
+  parent   Category?   @relation("CategoryTree", fields: [parentId], references: [id])
+  parentId String?
+  children Category[]  @relation("CategoryTree")
+  news     News[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Tag {
+  id       String    @id @default(uuid())
+  name     String
+  slug     String    @unique
+  taggings Tagging[]
+  createdAt DateTime @default(now())
+}
+
+// Polymorphic tag link so any content type can be tagged.
+model Tagging {
+  id         String     @id @default(uuid())
+  tag        Tag        @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId      String
+  targetType TargetType
+  targetId   String
+  createdAt  DateTime   @default(now())
+
+  @@unique([tagId, targetType, targetId])
+  @@index([targetType, targetId])
+}
+
+/* ------------------------------------------------------------------ */
+/* Anime domain                                                      */
+/* ------------------------------------------------------------------ */
+
+model Anime {
+  id         String    @id @default(uuid())
+  title      String
+  slug       String    @unique
+  synopsis   String?
+  studio     String?
+  coverUrl   String?
+  status     PublishStatus @default(DRAFT)
+  episodes   Episode[]
+  leaks      AnimeLeak[]
+  watchlist  Watchlist[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  @@index([status])
+}
+
+model Episode {
+  id        String        @id @default(uuid())
+  anime     Anime         @relation(fields: [animeId], references: [id], onDelete: Cascade)
+  animeId   String
+  number    Int
+  title     String?
+  synopsis  String?
+  airDate   DateTime?
+  platform  String?
+  thumbUrl  String?
+  status    EpisodeStatus @default(UPCOMING)
+  rating    Float?
+  views     Int           @default(0)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  deletedAt DateTime?
+
+  @@unique([animeId, number])
+  @@index([status, airDate])
+}
+
+model AnimeLeak {
+  id          String        @id @default(uuid())
+  title       String
+  slug        String        @unique
+  series      String
+  anime       Anime?        @relation(fields: [animeId], references: [id])
+  animeId     String?
+  summary     String?
+  type        LeakType
+  leakStatus  LeakStatus    @default(RUMORED)
+  status      PublishStatus @default(DRAFT)
+  sourceUrl   String?
+  leakerName  String?
+  heat        Int           @default(0)
+  commentCount Int          @default(0)
+  publishedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?
+
+  @@index([type, status])
+  @@index([publishedAt])
+}
+
+/* ------------------------------------------------------------------ */
+/* News                                                              */
+/* ------------------------------------------------------------------ */
+
+model News {
+  id          String        @id @default(uuid())
+  title       String
+  slug        String        @unique
+  excerpt     String?
+  body        String?
+  coverUrl    String?
+  category    Category?     @relation(fields: [categoryId], references: [id])
+  categoryId  String?
+  author      User?         @relation("NewsAuthor", fields: [authorId], references: [id])
+  authorId    String?
+  status      PublishStatus @default(DRAFT)
+  views       Int           @default(0)
+  seoTitle    String?
+  seoDesc     String?
+  publishedAt DateTime?
+  scheduledAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?
+
+  @@index([status, publishedAt])
+  @@index([categoryId])
+}
+
+/* ------------------------------------------------------------------ */
+/* TCG domain                                                        */
+/* ------------------------------------------------------------------ */
+
+model TcgGame {
+  id        String  @id @default(uuid())
+  name      String
+  slug      String  @unique // one-piece, pokemon, union-arena, yugioh, ...
+  logoUrl   String?
+  sortOrder Int     @default(0)
+  cards     Card[]
+  decks     Deck[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Card {
+  id          String   @id @default(uuid())
+  game        TcgGame  @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameId      String
+  name        String
+  code        String // e.g. OP05-119
+  rarity      String?
+  setName     String?
+  imageUrl    String?
+  marketPrice Decimal? @db.Decimal(10, 2)
+  priceChange Float?   @default(0)
+  heat        Int      @default(0)
+  releaseDate DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+
+  @@unique([gameId, code])
+  @@index([gameId])
+}
+
+model Deck {
+  id            String   @id @default(uuid())
+  game          TcgGame  @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameId        String
+  name          String
+  leader        String?
+  winRate       Float?   @default(0)
+  placements    Int      @default(0)
+  metaRank      Int?
+  decklist      Json     @default("[]")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  deletedAt     DateTime?
+
+  @@index([gameId, metaRank])
+}
+
+/* ------------------------------------------------------------------ */
+/* Trends                                                            */
+/* ------------------------------------------------------------------ */
+
+model Trend {
+  id         String      @id @default(uuid())
+  subject    String
+  category   ContentType
+  score      Int         @default(0)
+  change     Float       @default(0)
+  sentiment  Json        @default("{}")
+  capturedAt DateTime    @default(now())
+  createdAt  DateTime    @default(now())
+
+  @@index([category, capturedAt])
+}
+
+/* ------------------------------------------------------------------ */
+/* Media library                                                     */
+/* ------------------------------------------------------------------ */
+
+model Media {
+  id          String    @id @default(uuid())
+  url         String
+  type        MediaType @default(IMAGE)
+  alt         String?
+  folder      String?   @default("/")
+  width       Int?
+  height      Int?
+  sizeBytes   Int?
+  aiGenerated Boolean   @default(false)
+  approved    Boolean   @default(false)
+  uploader    User?     @relation("MediaUploader", fields: [uploaderId], references: [id])
+  uploaderId  String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  @@index([folder])
+  @@index([aiGenerated, approved])
+}
+
+/* ------------------------------------------------------------------ */
+/* AI engine                                                         */
+/* ------------------------------------------------------------------ */
+
+model AiJob {
+  id         String      @id @default(uuid())
+  type       AiJobType
+  status     AiJobStatus @default(WAITING)
+  provider   String?
+  model      String?
+  targetType TargetType?
+  targetId   String?
+  input      Json        @default("{}")
+  output     Json        @default("{}")
+  error      String?
+  logs       AiLog[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([status, type])
+}
+
+model AiLog {
+  id            String   @id @default(uuid())
+  job           AiJob?   @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  jobId         String?
+  provider      String
+  model         String
+  promptVersion String?
+  processingMs  Int?
+  tokensUsed    Int?
+  error         String?
+  createdAt     DateTime @default(now())
+
+  @@index([jobId])
+  @@index([createdAt])
+}
+
+/* ------------------------------------------------------------------ */
+/* Content sources (configurable from CMS)                           */
+/* ------------------------------------------------------------------ */
+
+model RssSource {
+  id            String     @id @default(uuid())
+  name          String
+  url           String
+  type          SourceType @default(RSS)
+  enabled       Boolean    @default(true)
+  category      ContentType?
+  lastFetchedAt DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model ApiSource {
+  id            String     @id @default(uuid())
+  name          String
+  endpoint      String
+  type          SourceType @default(API)
+  enabled       Boolean    @default(true)
+  config        Json       @default("{}")
+  lastFetchedAt DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+/* ------------------------------------------------------------------ */
+/* Member features                                                   */
+/* ------------------------------------------------------------------ */
+
+model Notification {
+  id        String           @id @default(uuid())
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  type      NotificationType @default(SYSTEM)
+  title     String
+  body      String?
+  link      String?
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  @@index([userId, read])
+}
+
+model Bookmark {
+  id         String     @id @default(uuid())
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  targetType TargetType
+  targetId   String
+  createdAt  DateTime   @default(now())
+
+  @@unique([userId, targetType, targetId])
+  @@index([userId])
+}
+
+model Watchlist {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  anime     Anime    @relation(fields: [animeId], references: [id], onDelete: Cascade)
+  animeId   String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, animeId])
+  @@index([userId])
+}
+
+/* ------------------------------------------------------------------ */
+/* Reserved: Virtual Pet (Phase 2 — data model only, no gameplay)    */
+/* Marketplace / Forum plug in here later without redesign.          */
+/* ------------------------------------------------------------------ */
+
+model Pet {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @unique
+  name      String   @default("Kitsu")
+  species   String   @default("kitsune")
+  level     Int      @default(1)
+  exp       Int      @default(0)
+  inventory Json     @default("[]")
+  stats     Json     @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
