@@ -2,13 +2,18 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Bell, ChevronDown, Menu, Search, X } from 'lucide-react'
+import { Bell, ChevronDown, LayoutDashboard, LogOut, Menu, Search, X } from 'lucide-react'
 import { mainNav } from '@/lib/nav'
+import { logoutMember } from '@/app/(site)/auth-actions'
+import { isStaff } from '@/lib/auth-roles'
 import { Logo } from './logo'
 import { ThemeToggle } from './theme-toggle'
 
-export function SiteHeader() {
+type HeaderUser = { username: string; role: string } | null
+
+export function SiteHeader({ user }: { user?: HeaderUser }) {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-bg/85 backdrop-blur-md">
@@ -72,12 +77,60 @@ export function SiteHeader() {
             <Bell className="h-4 w-4" />
             <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-primary" />
           </button>
-          <Link
-            href="/login"
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-bold text-on-primary transition-colors hover:bg-primary-hover"
-          >
-            Login
-          </Link>
+
+          {user ? (
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setMenuOpen((v) => !v)}
+                className="flex items-center gap-2 rounded-full border border-line bg-surface-2 py-1 pl-1 pr-2 transition-colors hover:border-line-strong"
+              >
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xs font-bold text-on-primary">
+                  {user.username.charAt(0).toUpperCase()}
+                </span>
+                <ChevronDown className="h-3.5 w-3.5 text-muted" />
+              </button>
+              {menuOpen && (
+                <div className="absolute right-0 top-full mt-1 w-48 rounded-xl border border-line bg-bg-elevated p-1.5 shadow-xl">
+                  <div className="px-3 py-2">
+                    <p className="truncate text-sm font-bold text-text">{user.username}</p>
+                    <p className="text-[11px] text-faint">{user.role}</p>
+                  </div>
+                  <Link
+                    href="/library"
+                    className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted hover:bg-surface-2 hover:text-text"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <LayoutDashboard className="h-4 w-4" /> My Library
+                  </Link>
+                  {isStaff(user.role) && (
+                    <Link
+                      href="/admin"
+                      className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted hover:bg-surface-2 hover:text-text"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <LayoutDashboard className="h-4 w-4" /> CMS Control Center
+                    </Link>
+                  )}
+                  <form action={logoutMember}>
+                    <button
+                      type="submit"
+                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-muted hover:bg-surface-2 hover:text-down"
+                    >
+                      <LogOut className="h-4 w-4" /> Sign out
+                    </button>
+                  </form>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="rounded-lg bg-primary px-4 py-2 text-sm font-bold text-on-primary transition-colors hover:bg-primary-hover"
+            >
+              Login
+            </Link>
+          )}
         </div>
       </div>
 

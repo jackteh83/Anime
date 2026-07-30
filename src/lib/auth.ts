@@ -77,15 +77,4 @@ export async function getSession(): Promise<SessionPayload | null> {
   return verifySession(token)
 }
 
-/** Roles allowed into the CMS control center. */
-export const STAFF_ROLES = [
-  'Super Admin',
-  'Administrator',
-  'Editor',
-  'Moderator',
-  'Author',
-]
-
-export function isStaff(role: string | undefined): boolean {
-  return !!role && STAFF_ROLES.includes(role)
-}
+export { STAFF_ROLES, isStaff } from './auth-roles'
