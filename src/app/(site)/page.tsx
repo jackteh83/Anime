@@ -12,6 +12,7 @@ import {
 import { Pill, StatChange, Thumb, Widget } from '@/components/ui'
 import * as data from '@/lib/homepage-data'
 import { getHomepageConfig, type HomepageSectionKey } from '@/lib/homepage-config'
+import { getLatestNews } from '@/lib/news-data'
 
 // Each homepage section (row) as a renderer, keyed for the Homepage Builder.
 const SECTIONS: Record<HomepageSectionKey, () => React.ReactNode> = {
@@ -516,7 +517,14 @@ function DiscordCta() {
   )
 }
 
-function LatestNews() {
+async function LatestNews() {
+  // Same DB query the /news page uses — the homepage shows the top 4 rows of
+  // the real subpage data. Falls back to placeholder copy only if empty.
+  const live = await getLatestNews(4)
+  const items =
+    live.length > 0
+      ? live
+      : data.latestNews.map((n) => ({ ...n, slug: '' }))
   return (
     <Widget
       title="Latest News"
@@ -524,10 +532,10 @@ function LatestNews() {
       viewAllHref="/news"
     >
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {data.latestNews.map((n) => (
+        {items.map((n) => (
           <Link
             key={n.title}
-            href="/news"
+            href={n.slug ? `/news/${n.slug}` : '/news'}
             className="group overflow-hidden rounded-lg border border-line bg-surface-2 transition-colors hover:border-line-strong"
           >
             <Thumb tone={n.tone} className="h-28 w-full rounded-none" />

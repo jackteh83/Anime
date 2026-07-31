@@ -64,6 +64,21 @@ async function main() {
     })
   }
 
+  // Default RSS sources (real, free anime-news feeds). Editable in the CMS.
+  const RSS_SOURCES = [
+    { name: 'Anime News Network', url: 'https://www.animenewsnetwork.com/newsroom/rss.xml' },
+    { name: 'Crunchyroll News', url: 'https://www.crunchyroll.com/newsrss' },
+    { name: 'Gematsu', url: 'https://gematsu.com/feed' },
+  ]
+  for (const src of RSS_SOURCES) {
+    const existing = await prisma.rssSource.findFirst({ where: { url: src.url } })
+    if (!existing) {
+      await prisma.rssSource.create({
+        data: { name: src.name, url: src.url, type: 'RSS', enabled: true, category: 'NEWS' },
+      })
+    }
+  }
+
   // Super Admin account. Credentials come from env; the defaults let a fresh
   // database work out of the box. Override ADMIN_PASSWORD in Vercel for prod.
   const adminEmail = (process.env.ADMIN_EMAIL ?? 'admin@anisekai.com').toLowerCase()

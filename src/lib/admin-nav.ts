@@ -7,6 +7,7 @@ import {
   Image as ImageIcon,
   LayoutDashboard,
   LayoutTemplate,
+  Rss,
   Search,
   Settings,
   Users,
@@ -28,6 +29,7 @@ export const adminNav: AdminNavItem[] = [
   { label: 'Scheduler', href: '/admin/scheduler', icon: CalendarClock },
   { label: 'Users', href: '/admin/users', icon: Users },
   { label: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
+  { label: 'Content Sources', href: '/admin/sources', icon: Rss },
   { label: 'AI Engine', href: '/admin/ai', icon: Bot },
   { label: 'Settings', href: '/admin/settings', icon: Settings },
 ]

@@ -2,10 +2,10 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import { Newspaper } from 'lucide-react'
 import { SectionHero, SectionTabs } from '@/components/section-hero'
-import { Pill, Thumb, Widget, type Tone } from '@/components/ui'
-import { prisma } from '@/lib/db'
+import { Pill, Thumb, Widget } from '@/components/ui'
 import { breakingNews, newsCategories } from '@/lib/section-data'
 import { latestNews as seedNews } from '@/lib/homepage-data'
+import { getLatestNews } from '@/lib/news-data'
 
 export const metadata: Metadata = {
   title: 'News',
@@ -25,40 +25,13 @@ const tabs = [
   { label: 'Events', href: '/news?cat=events' },
 ]
 
-function fmtAgo(d: Date | null) {
-  if (!d) return ''
-  const mins = Math.max(1, Math.round((Date.now() - new Date(d).getTime()) / 60000))
-  if (mins < 60) return `${mins}m ago`
-  const hrs = Math.round(mins / 60)
-  return hrs < 24 ? `${hrs}h ago` : `${Math.round(hrs / 24)}d ago`
-}
-
-async function loadNews() {
-  try {
-    return await prisma.news.findMany({
-      where: { status: 'PUBLISHED', deletedAt: null },
-      orderBy: { publishedAt: 'desc' },
-      include: { category: true },
-      take: 12,
-    })
-  } catch {
-    return []
-  }
-}
-
 export default async function NewsPage() {
-  const published = await loadNews()
+  const published = await getLatestNews(12)
 
   const items =
     published.length > 0
-      ? published.map((n) => ({
-          title: n.title,
-          excerpt: n.excerpt ?? '',
-          cat: n.category?.name ?? 'News',
-          tone: 'primary' as Tone,
-          ago: fmtAgo(n.publishedAt),
-        }))
-      : seedNews.map((n) => ({ ...n, excerpt: '' }))
+      ? published
+      : seedNews.map((n) => ({ ...n, excerpt: '', slug: '' }))
 
   const [featured, ...rest] = items
 
@@ -77,7 +50,7 @@ export default async function NewsPage() {
           {/* Featured */}
           {featured && (
             <Link
-              href="/news"
+              href={featured.slug ? `/news/${featured.slug}` : '/news'}
               className="group block overflow-hidden rounded-card border border-line bg-surface"
             >
               <Thumb tone={featured.tone} className="h-56 w-full rounded-none" />
@@ -102,7 +75,7 @@ export default async function NewsPage() {
               {rest.map((n) => (
                 <Link
                   key={n.title}
-                  href="/news"
+                  href={n.slug ? `/news/${n.slug}` : '/news'}
                   className="group overflow-hidden rounded-lg border border-line bg-surface-2 transition-colors hover:border-line-strong"
                 >
                   <Thumb tone={n.tone} className="h-32 w-full rounded-none" />

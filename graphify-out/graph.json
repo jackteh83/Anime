@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-07-31T08:43:34.131Z",
+  "generatedAt": "2026-07-31T09:12:22.819Z",
   "stats": {
-    "files": 88,
-    "routes": 29,
-    "clientComponents": 13,
-    "serverActions": 11
+    "files": 96,
+    "routes": 31,
+    "clientComponents": 14,
+    "serverActions": 12
   },
   "routes": [
     {
@@ -84,6 +84,10 @@
       "file": "src/app/admin/(dashboard)/settings/page.tsx"
     },
     {
+      "route": "/admin/sources",
+      "file": "src/app/admin/(dashboard)/sources/page.tsx"
+    },
+    {
       "route": "/admin/users",
       "file": "src/app/admin/(dashboard)/users/page.tsx"
     },
@@ -110,6 +114,10 @@
     {
       "route": "/news",
       "file": "src/app/(site)/news/page.tsx"
+    },
+    {
+      "route": "/news/[slug]",
+      "file": "src/app/(site)/news/[slug]/page.tsx"
     },
     {
       "route": "/register",
@@ -179,7 +187,7 @@
       "exports": [],
       "imports": [],
       "route": null,
-      "loc": 104
+      "loc": 119
     },
     {
       "file": "src/app/(site)/auth-actions.ts",
@@ -306,6 +314,22 @@
       "loc": 24
     },
     {
+      "file": "src/app/(site)/news/[slug]/page.tsx",
+      "kind": "module",
+      "exports": [
+        "dynamic",
+        "generateMetadata",
+        "default"
+      ],
+      "imports": [
+        "@/components/ui",
+        "@/lib/db",
+        "@/lib/news-data"
+      ],
+      "route": "/news/[slug]",
+      "loc": 117
+    },
+    {
       "file": "src/app/(site)/news/page.tsx",
       "kind": "module",
       "exports": [
@@ -316,12 +340,12 @@
       "imports": [
         "@/components/section-hero",
         "@/components/ui",
-        "@/lib/db",
         "@/lib/section-data",
-        "@/lib/homepage-data"
+        "@/lib/homepage-data",
+        "@/lib/news-data"
       ],
       "route": "/news",
-      "loc": 160
+      "loc": 133
     },
     {
       "file": "src/app/(site)/page.tsx",
@@ -333,10 +357,11 @@
       "imports": [
         "@/components/ui",
         "@/lib/homepage-data",
-        "@/lib/homepage-config"
+        "@/lib/homepage-config",
+        "@/lib/news-data"
       ],
       "route": "/",
-      "loc": 549
+      "loc": 557
     },
     {
       "file": "src/app/(site)/register/page.tsx",
@@ -911,6 +936,54 @@
       "loc": 136
     },
     {
+      "file": "src/app/admin/(dashboard)/sources/actions.ts",
+      "kind": "server-action",
+      "exports": [
+        "FetchState",
+        "fetchNowAction",
+        "addSourceAction",
+        "toggleSourceAction",
+        "deleteSourceAction"
+      ],
+      "imports": [
+        "@/lib/db",
+        "@/lib/auth",
+        "@/lib/ingest/run"
+      ],
+      "route": null,
+      "loc": 81
+    },
+    {
+      "file": "src/app/admin/(dashboard)/sources/fetch-now.tsx",
+      "kind": "client",
+      "exports": [
+        "FetchNow"
+      ],
+      "imports": [
+        "./actions"
+      ],
+      "route": null,
+      "loc": 63
+    },
+    {
+      "file": "src/app/admin/(dashboard)/sources/page.tsx",
+      "kind": "module",
+      "exports": [
+        "metadata",
+        "dynamic",
+        "default"
+      ],
+      "imports": [
+        "@/components/admin/admin-ui",
+        "@/components/ui",
+        "@/lib/db",
+        "./fetch-now",
+        "./actions"
+      ],
+      "route": "/admin/sources",
+      "loc": 150
+    },
+    {
       "file": "src/app/admin/(dashboard)/users/actions.ts",
       "kind": "server-action",
       "exports": [
@@ -996,6 +1069,20 @@
       ],
       "route": "/admin/login",
       "loc": 42
+    },
+    {
+      "file": "src/app/api/cron/ingest/route.ts",
+      "kind": "module",
+      "exports": [
+        "dynamic",
+        "maxDuration",
+        "GET"
+      ],
+      "imports": [
+        "@/lib/ingest/run"
+      ],
+      "route": null,
+      "loc": 32
     },
     {
       "file": "src/app/api/cron/publish/route.ts",
@@ -1186,7 +1273,7 @@
       ],
       "imports": [],
       "route": null,
-      "loc": 34
+      "loc": 36
     },
     {
       "file": "src/lib/ai/config.ts",
@@ -1391,6 +1478,33 @@
       "loc": 84
     },
     {
+      "file": "src/lib/ingest/rss.ts",
+      "kind": "module",
+      "exports": [
+        "FeedItem",
+        "parseFeed",
+        "fetchFeed"
+      ],
+      "imports": [],
+      "route": null,
+      "loc": 101
+    },
+    {
+      "file": "src/lib/ingest/run.ts",
+      "kind": "module",
+      "exports": [
+        "IngestResult",
+        "ingestAllRss"
+      ],
+      "imports": [
+        "@/lib/db",
+        "@/lib/slug",
+        "./rss"
+      ],
+      "route": null,
+      "loc": 74
+    },
+    {
       "file": "src/lib/nav.ts",
       "kind": "module",
       "exports": [
@@ -1401,6 +1515,21 @@
       "imports": [],
       "route": null,
       "loc": 89
+    },
+    {
+      "file": "src/lib/news-data.ts",
+      "kind": "module",
+      "exports": [
+        "NewsCardItem",
+        "newsAgo",
+        "getLatestNews"
+      ],
+      "imports": [
+        "@/lib/db",
+        "@/components/ui"
+      ],
+      "route": null,
+      "loc": 66
     },
     {
       "file": "src/lib/scheduler.ts",
