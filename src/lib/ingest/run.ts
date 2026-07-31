@@ -49,6 +49,7 @@ export async function ingestAllRss(): Promise<IngestResult[]> {
             slug,
             excerpt: item.summary || null,
             body,
+            coverUrl: item.image || null,
             status: 'PUBLISHED',
             publishedAt: item.publishedAt ?? new Date(),
           },

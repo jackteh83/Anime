@@ -10,7 +10,7 @@ import {
   upcomingTournaments,
 } from '@/lib/section-data'
 import { marketWatch as seedMarket, tcgReleases } from '@/lib/homepage-data'
-import { getTopCards, getMarketMovers, formatPrice } from '@/lib/tcg-data'
+import { getTopCards, getMarketMovers, getNewestCards, formatPrice } from '@/lib/tcg-data'
 
 export const metadata: Metadata = {
   title: 'TCG Hub',
@@ -33,6 +33,18 @@ export default async function TcgPage() {
   // Single source of truth: same real card data the homepage widgets read.
   const topCards = await getTopCards(6)
   const movers = await getMarketMovers(5)
+  const newest = await getNewestCards(10)
+
+  const reveals =
+    newest.length > 0
+      ? newest.map((c) => ({
+          name: c.name,
+          set: c.setName || c.code,
+          rarity: c.rarity || 'Card',
+          tone: c.tone,
+          img: c.imageUrl as string | null,
+        }))
+      : cardReveals.map((c) => ({ ...c, img: null as string | null }))
 
   const trending =
     topCards.length > 0
@@ -43,8 +55,9 @@ export default async function TcgPage() {
           rarity: c.rarity || c.setName,
           heat: formatPrice(c.price),
           tone: c.tone,
+          img: c.imageUrl as string | null,
         }))
-      : trendingCards
+      : trendingCards.map((c) => ({ ...c, img: null as string | null }))
 
   const market =
     movers.length > 0
@@ -53,8 +66,9 @@ export default async function TcgPage() {
           sub: c.setName || c.rarity,
           price: formatPrice(c.price),
           change: c.priceChange,
+          img: c.imageUrl as string | null,
         }))
-      : seedMarket
+      : seedMarket.map((m) => ({ ...m, img: null as string | null }))
 
   return (
     <div className="mx-auto max-w-[1400px] space-y-4 px-4 py-5 sm:px-6">
@@ -131,7 +145,7 @@ export default async function TcgPage() {
                 <tr key={m.set} className="border-b border-line last:border-0">
                   <td className="py-2.5">
                     <div className="flex items-center gap-2">
-                      <Thumb tone="primary" size="sm" className="h-8 w-8" />
+                      <Thumb tone="primary" size="sm" className="h-8 w-8" src={m.img} alt={m.set} />
                       <div>
                         <p className="text-sm font-semibold text-text">{m.set}</p>
                         <p className="text-[11px] text-faint">{m.sub}</p>
@@ -151,11 +165,17 @@ export default async function TcgPage() {
         {/* Card reveals */}
         <Widget title="Latest Card Reveals" className="lg:col-span-2" viewAllHref="/tcg/reveals">
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-            {cardReveals.map((c) => (
+            {reveals.map((c) => (
               <div key={c.name} className="text-center">
-                <Thumb tone={c.tone} label="Sample" className="mx-auto mb-2 h-36 w-full" />
+                <Thumb
+                  tone={c.tone}
+                  label="Sample"
+                  src={c.img}
+                  alt={c.name}
+                  className="mx-auto mb-2 h-36 w-full"
+                />
                 <p className="truncate text-sm font-bold text-text">{c.name}</p>
-                <p className="text-[11px] text-faint">{c.set}</p>
+                <p className="truncate text-[11px] text-faint">{c.set}</p>
                 <Pill tone={c.tone} className="mt-1">{c.rarity}</Pill>
               </div>
             ))}
@@ -170,7 +190,7 @@ export default async function TcgPage() {
                 <span className="w-5 text-sm font-extrabold text-primary">
                   {String(c.rank).padStart(2, '0')}
                 </span>
-                <Thumb tone={c.tone} size="sm" />
+                <Thumb tone={c.tone} size="sm" src={c.img} alt={c.name} />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold text-text">{c.name}</p>
                   <p className="text-[11px] text-faint">

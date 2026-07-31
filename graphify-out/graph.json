@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-31T10:19:20.160Z",
+  "generatedAt": "2026-07-31T10:27:38.328Z",
   "stats": {
     "files": 98,
     "routes": 31,
@@ -327,7 +327,7 @@
         "@/lib/news-data"
       ],
       "route": "/news/[slug]",
-      "loc": 117
+      "loc": 126
     },
     {
       "file": "src/app/(site)/news/page.tsx",
@@ -362,7 +362,7 @@
         "@/lib/tcg-data"
       ],
       "route": "/",
-      "loc": 593
+      "loc": 596
     },
     {
       "file": "src/app/(site)/register/page.tsx",
@@ -408,7 +408,7 @@
         "@/lib/tcg-data"
       ],
       "route": "/tcg",
-      "loc": 209
+      "loc": 229
     },
     {
       "file": "src/app/(site)/trends/page.tsx",
@@ -1265,7 +1265,7 @@
       ],
       "imports": [],
       "route": null,
-      "loc": 138
+      "loc": 155
     },
     {
       "file": "src/lib/admin-nav.ts",
@@ -1490,7 +1490,7 @@
       ],
       "imports": [],
       "route": null,
-      "loc": 101
+      "loc": 131
     },
     {
       "file": "src/lib/ingest/run.ts",
@@ -1507,7 +1507,7 @@
         "./tcg"
       ],
       "route": null,
-      "loc": 139
+      "loc": 140
     },
     {
       "file": "src/lib/ingest/tcg.ts",
@@ -1545,7 +1545,7 @@
         "@/components/ui"
       ],
       "route": null,
-      "loc": 66
+      "loc": 68
     },
     {
       "file": "src/lib/scheduler.ts",
@@ -1638,6 +1638,7 @@
         "CardRow",
         "formatPrice",
         "getTopCards",
+        "getNewestCards",
         "getMarketMovers"
       ],
       "imports": [
@@ -1645,7 +1646,7 @@
         "@/components/ui"
       ],
       "route": null,
-      "loc": 78
+      "loc": 101
     }
   ]
 }

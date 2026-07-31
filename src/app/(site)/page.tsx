@@ -222,6 +222,7 @@ async function TopHotCards() {
           right: formatPrice(c.price),
           change: c.priceChange,
           tone: c.tone,
+          img: c.imageUrl,
         }))
       : data.topHotCards.map((c) => ({
           name: c.name,
@@ -229,6 +230,7 @@ async function TopHotCards() {
           right: '',
           change: c.change,
           tone: c.tone,
+          img: null as string | null,
         }))
   return (
     <Widget
@@ -239,7 +241,7 @@ async function TopHotCards() {
       <ul className="space-y-3">
         {items.map((c) => (
           <li key={c.name} className="flex items-center gap-3">
-            <Thumb tone={c.tone} size="sm" />
+            <Thumb tone={c.tone} size="sm" src={c.img} alt={c.name} />
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-text">
                 {c.name}
@@ -413,8 +415,9 @@ async function MarketWatch() {
           sub: c.setName || c.rarity,
           price: formatPrice(c.price),
           change: c.priceChange,
+          img: c.imageUrl,
         }))
-      : data.marketWatch
+      : data.marketWatch.map((m) => ({ ...m, img: null as string | null }))
   return (
     <Widget title="TCG Market Watch" viewAllHref="/tcg/market" viewAllLabel="View Market">
       <table className="w-full text-sm">
@@ -430,7 +433,7 @@ async function MarketWatch() {
             <tr key={m.set} className="border-t border-line">
               <td className="py-2.5">
                 <div className="flex items-center gap-2">
-                  <Thumb tone="primary" size="sm" className="h-9 w-9" />
+                  <Thumb tone="primary" size="sm" className="h-9 w-9" src={m.img} alt={m.set} />
                   <div>
                     <p className="font-semibold text-text">{m.set}</p>
                     <p className="text-xs text-faint">{m.sub}</p>
@@ -560,7 +563,7 @@ async function LatestNews() {
   const items =
     live.length > 0
       ? live
-      : data.latestNews.map((n) => ({ ...n, slug: '' }))
+      : data.latestNews.map((n) => ({ ...n, slug: '', image: null as string | null }))
   return (
     <Widget
       title="Latest News"
@@ -574,7 +577,7 @@ async function LatestNews() {
             href={n.slug ? `/news/${n.slug}` : '/news'}
             className="group overflow-hidden rounded-lg border border-line bg-surface-2 transition-colors hover:border-line-strong"
           >
-            <Thumb tone={n.tone} className="h-28 w-full rounded-none" />
+            <Thumb tone={n.tone} src={n.image} alt={n.title} className="h-28 w-full rounded-none" />
             <div className="p-3">
               <div className="mb-2 flex items-center justify-between">
                 <Pill tone={n.tone}>{n.cat}</Pill>

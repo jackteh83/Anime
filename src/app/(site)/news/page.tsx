@@ -31,7 +31,7 @@ export default async function NewsPage() {
   const items =
     published.length > 0
       ? published
-      : seedNews.map((n) => ({ ...n, excerpt: '', slug: '' }))
+      : seedNews.map((n) => ({ ...n, excerpt: '', slug: '', image: null as string | null }))
 
   const [featured, ...rest] = items
 
@@ -53,7 +53,7 @@ export default async function NewsPage() {
               href={featured.slug ? `/news/${featured.slug}` : '/news'}
               className="group block overflow-hidden rounded-card border border-line bg-surface"
             >
-              <Thumb tone={featured.tone} className="h-56 w-full rounded-none" />
+              <Thumb tone={featured.tone} src={featured.image} alt={featured.title} className="h-56 w-full rounded-none" />
               <div className="p-5">
                 <div className="mb-2 flex items-center gap-2">
                   <Pill tone="primary">Featured</Pill>
@@ -78,7 +78,7 @@ export default async function NewsPage() {
                   href={n.slug ? `/news/${n.slug}` : '/news'}
                   className="group overflow-hidden rounded-lg border border-line bg-surface-2 transition-colors hover:border-line-strong"
                 >
-                  <Thumb tone={n.tone} className="h-32 w-full rounded-none" />
+                  <Thumb tone={n.tone} src={n.image} alt={n.title} className="h-32 w-full rounded-none" />
                   <div className="p-3">
                     <div className="mb-2 flex items-center justify-between">
                       <Pill tone={n.tone}>{n.cat}</Pill>

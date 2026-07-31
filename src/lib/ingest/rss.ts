@@ -5,6 +5,7 @@ export type FeedItem = {
   title: string
   link: string
   summary: string
+  image: string | null
   publishedAt: Date | null
 }
 
@@ -42,6 +43,33 @@ function toDate(s: string): Date | null {
   return isNaN(d.getTime()) ? null : d
 }
 
+function attrUrl(v: unknown): string | null {
+  const first = asArray(v as unknown)[0] as { '@_url'?: string } | undefined
+  const url = first?.['@_url']
+  return typeof url === 'string' && url ? url : null
+}
+
+/** Best-effort image URL from common RSS/Atom media conventions + inline HTML. */
+function extractImage(it: Record<string, unknown>): string | null {
+  // media:content / media:thumbnail (Media RSS)
+  const media = attrUrl(it['media:content']) ?? attrUrl(it['media:thumbnail'])
+  if (media) return media
+
+  // <enclosure url="..." type="image/..."> or a bare url
+  const enc = asArray(it.enclosure as unknown)[0] as
+    | { '@_url'?: string; '@_type'?: string }
+    | undefined
+  if (enc?.['@_url'] && (!enc['@_type'] || enc['@_type'].startsWith('image'))) {
+    return enc['@_url']
+  }
+
+  // First <img src> inside description / content:encoded / content
+  const html =
+    text(it['content:encoded']) || text(it.description) || text(it.content)
+  const m = html.match(/<img[^>]+src=["']([^"']+)["']/i)
+  return m ? m[1] : null
+}
+
 /** Parse an RSS 2.0 or Atom feed body into normalized items. */
 export function parseFeed(xml: string): FeedItem[] {
   const obj = parser.parse(xml)
@@ -54,6 +82,7 @@ export function parseFeed(xml: string): FeedItem[] {
         title: stripHtml(text(it.title)),
         link: text(it.link),
         summary: stripHtml(text(it.description)).slice(0, 500),
+        image: extractImage(it),
         publishedAt: toDate(text(it.pubDate) || text(it['dc:date'])),
       }))
       .filter((i) => i.title)
@@ -74,6 +103,7 @@ export function parseFeed(xml: string): FeedItem[] {
           title: stripHtml(text(e.title)),
           link,
           summary: stripHtml(text(e.summary) || text(e.content)).slice(0, 500),
+          image: extractImage(e),
           publishedAt: toDate(text(e.updated) || text(e.published)),
         }
       })

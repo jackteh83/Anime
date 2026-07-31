@@ -53,6 +53,29 @@ export async function getTopCards(take = 5): Promise<CardRow[]> {
   }
 }
 
+/** Most recently released cards first — for the big card-reveal grids. */
+export async function getNewestCards(take = 10): Promise<CardRow[]> {
+  try {
+    const rows = await prisma.card.findMany({
+      where: { deletedAt: null, imageUrl: { not: null } },
+      orderBy: [{ releaseDate: 'desc' }, { createdAt: 'desc' }],
+      take,
+    })
+    return rows.map((c, i) => ({
+      name: c.name,
+      code: c.code,
+      rarity: c.rarity ?? '',
+      setName: c.setName ?? '',
+      imageUrl: c.imageUrl,
+      price: c.marketPrice != null ? Number(c.marketPrice) : null,
+      priceChange: c.priceChange ?? 0,
+      tone: toneFor(i),
+    }))
+  } catch {
+    return []
+  }
+}
+
 /** Biggest recent price movers (largest absolute change first). */
 export async function getMarketMovers(take = 4): Promise<CardRow[]> {
   try {

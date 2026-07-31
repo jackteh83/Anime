@@ -15,6 +15,7 @@ export type NewsCardItem = {
   cat: string
   tone: Tone
   ago: string
+  image: string | null
 }
 
 // Category name → accent tone. Falls back to primary for anything unmapped.
@@ -58,6 +59,7 @@ export async function getLatestNews(take = 12): Promise<NewsCardItem[]> {
       cat: n.category?.name ?? 'News',
       tone: CATEGORY_TONE[n.category?.name ?? ''] ?? 'primary',
       ago: newsAgo(n.publishedAt),
+      image: n.coverUrl ?? null,
     }))
   } catch {
     return []

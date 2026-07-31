@@ -162,4 +162,4 @@
 - **src/lib/settings.ts** — exports: GeneralSettings, LocalizationSettings, AdsSettings, SeoSettings, SETTING_DEFAULTS, SettingKey, getSettings
 - **src/lib/site-url.ts** — exports: siteBaseUrl
 - **src/lib/slug.ts** — exports: slugify, uniqueSlug
-- **src/lib/tcg-data.ts** — exports: CardRow, formatPrice, getTopCards, getMarketMovers
+- **src/lib/tcg-data.ts** — exports: CardRow, formatPrice, getTopCards, getNewestCards, getMarketMovers

@@ -67,7 +67,16 @@ export default async function NewsArticlePage({
       </Link>
 
       <article className="overflow-hidden rounded-card border border-line bg-surface">
-        <div className="h-52 w-full bg-gradient-to-br from-primary/30 via-surface-2 to-surface" />
+        {article.coverUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={article.coverUrl}
+            alt={article.title}
+            className="h-64 w-full object-cover"
+          />
+        ) : (
+          <div className="h-52 w-full bg-gradient-to-br from-primary/30 via-surface-2 to-surface" />
+        )}
         <div className="p-6 sm:p-8">
           <div className="mb-3 flex flex-wrap items-center gap-2">
             <Pill tone="primary">{article.category?.name ?? 'News'}</Pill>

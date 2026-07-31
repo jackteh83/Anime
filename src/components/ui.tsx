@@ -94,11 +94,16 @@ export function Thumb({
   tone = 'primary',
   size = 'md',
   label,
+  src,
+  alt = '',
   className = '',
 }: {
   tone?: Tone
   size?: 'sm' | 'md' | 'lg'
   label?: string
+  /** Real image URL. When present it renders over the gradient placeholder. */
+  src?: string | null
+  alt?: string
   className?: string
 }) {
   const sizes = { sm: 'h-10 w-10', md: 'h-14 w-14', lg: 'h-20 w-16' }
@@ -115,12 +120,24 @@ export function Thumb({
   }
   return (
     <div
-      className={`flex shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br ${grad[tone]} ${sizes[size]} ${className}`}
+      className={`relative flex shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br ${grad[tone]} ${sizes[size]} ${className}`}
     >
-      {label && (
-        <span className="px-1 text-center text-[9px] font-bold uppercase text-text/70">
-          {label}
-        </span>
+      {src ? (
+        // Plain <img>: external card/news hosts aren't in next/image's
+        // remotePatterns allow-list, and these are already-sized thumbnails.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      ) : (
+        label && (
+          <span className="px-1 text-center text-[9px] font-bold uppercase text-text/70">
+            {label}
+          </span>
+        )
       )}
     </div>
   )
