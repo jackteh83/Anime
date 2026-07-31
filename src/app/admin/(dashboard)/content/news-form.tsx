@@ -19,6 +19,7 @@ export type NewsInitial = {
   status?: string
   seoTitle?: string
   seoDesc?: string
+  scheduledAt?: string
 }
 
 function SaveButton() {
@@ -230,6 +231,19 @@ export function NewsForm({
             AI-generated content should stay in <b>Pending Review</b> until an
             editor approves it.
           </p>
+          <div className="mt-4">
+            <label className={labelClass}>Schedule publish (optional)</label>
+            <input
+              type="datetime-local"
+              name="scheduledAt"
+              defaultValue={initial.scheduledAt}
+              className={inputClass}
+            />
+            <p className="mt-1 text-xs text-faint">
+              Set a future time and status <b>Scheduled</b>; the Scheduler
+              publishes it automatically when due.
+            </p>
+          </div>
           <div className="mt-4 flex items-center gap-2">
             <SaveButton />
             <Link

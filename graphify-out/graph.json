@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-07-31T08:17:20.213Z",
+  "generatedAt": "2026-07-31T08:43:34.131Z",
   "stats": {
-    "files": 85,
+    "files": 88,
     "routes": 29,
     "clientComponents": 13,
-    "serverActions": 10
+    "serverActions": 11
   },
   "routes": [
     {
@@ -480,7 +480,7 @@
         "../actions"
       ],
       "route": "/admin/content/[id]",
-      "loc": 53
+      "loc": 56
     },
     {
       "file": "src/app/admin/(dashboard)/content/actions.ts",
@@ -499,7 +499,7 @@
         "@/lib/content"
       ],
       "route": null,
-      "loc": 142
+      "loc": 152
     },
     {
       "file": "src/app/admin/(dashboard)/content/ai-actions.ts",
@@ -644,7 +644,7 @@
         "./ai-actions"
       ],
       "route": null,
-      "loc": 259
+      "loc": 273
     },
     {
       "file": "src/app/admin/(dashboard)/content/page.tsx",
@@ -803,18 +803,34 @@
       "loc": 188
     },
     {
+      "file": "src/app/admin/(dashboard)/scheduler/actions.ts",
+      "kind": "server-action",
+      "exports": [
+        "publishDueNow"
+      ],
+      "imports": [
+        "@/lib/auth",
+        "@/lib/scheduler"
+      ],
+      "route": null,
+      "loc": 17
+    },
+    {
       "file": "src/app/admin/(dashboard)/scheduler/page.tsx",
       "kind": "module",
       "exports": [
         "metadata",
-        "SchedulerPage",
         "default"
       ],
       "imports": [
-        "@/components/admin/admin-ui"
+        "@/components/admin/admin-ui",
+        "@/components/ui",
+        "@/lib/db",
+        "@/lib/auth",
+        "./actions"
       ],
       "route": "/admin/scheduler",
-      "loc": 27
+      "loc": 107
     },
     {
       "file": "src/app/admin/(dashboard)/seo/page.tsx",
@@ -980,6 +996,19 @@
       ],
       "route": "/admin/login",
       "loc": 42
+    },
+    {
+      "file": "src/app/api/cron/publish/route.ts",
+      "kind": "module",
+      "exports": [
+        "dynamic",
+        "GET"
+      ],
+      "imports": [
+        "@/lib/scheduler"
+      ],
+      "route": null,
+      "loc": 32
     },
     {
       "file": "src/app/layout.tsx",
@@ -1372,6 +1401,18 @@
       "imports": [],
       "route": null,
       "loc": 89
+    },
+    {
+      "file": "src/lib/scheduler.ts",
+      "kind": "module",
+      "exports": [
+        "publishDueScheduled"
+      ],
+      "imports": [
+        "@/lib/db"
+      ],
+      "route": null,
+      "loc": 20
     },
     {
       "file": "src/lib/section-data.ts",

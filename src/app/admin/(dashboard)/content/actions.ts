@@ -16,6 +16,7 @@ const newsSchema = z.object({
   status: z.enum(PUBLISH_STATUSES),
   seoTitle: z.string().max(160).optional().or(z.literal('')),
   seoDesc: z.string().max(300).optional().or(z.literal('')),
+  scheduledAt: z.string().optional().or(z.literal('')),
 })
 
 export type ContentFormState = { error?: string }
@@ -29,7 +30,14 @@ function parse(formData: FormData) {
     status: formData.get('status'),
     seoTitle: formData.get('seoTitle') ?? '',
     seoDesc: formData.get('seoDesc') ?? '',
+    scheduledAt: formData.get('scheduledAt') ?? '',
   })
+}
+
+function scheduledAtFrom(value: string | undefined): Date | null {
+  if (!value) return null
+  const d = new Date(value)
+  return isNaN(d.getTime()) ? null : d
 }
 
 // When an item becomes PUBLISHED, stamp publishedAt once.
@@ -61,6 +69,7 @@ export async function createNews(
       status: d.status,
       seoTitle: d.seoTitle || null,
       seoDesc: d.seoDesc || null,
+      scheduledAt: scheduledAtFrom(d.scheduledAt),
       authorId: session.userId,
       publishedAt: publishedAtFor(d.status, null),
     },
@@ -100,6 +109,7 @@ export async function updateNews(
       status: d.status,
       seoTitle: d.seoTitle || null,
       seoDesc: d.seoDesc || null,
+      scheduledAt: scheduledAtFrom(d.scheduledAt),
       publishedAt: publishedAtFor(d.status, existing.publishedAt),
     },
   })

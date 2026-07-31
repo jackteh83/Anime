@@ -45,6 +45,9 @@ export default async function EditContentPage(props: {
           status: article.status,
           seoTitle: article.seoTitle ?? '',
           seoDesc: article.seoDesc ?? '',
+          scheduledAt: article.scheduledAt
+            ? new Date(article.scheduledAt).toISOString().slice(0, 16)
+            : '',
         }}
       />
     </div>
