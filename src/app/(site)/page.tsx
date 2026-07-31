@@ -11,48 +11,58 @@ import {
 } from 'lucide-react'
 import { Pill, StatChange, Thumb, Widget } from '@/components/ui'
 import * as data from '@/lib/homepage-data'
+import { getHomepageConfig, type HomepageSectionKey } from '@/lib/homepage-config'
 
-export default function HomePage() {
+// Each homepage section (row) as a renderer, keyed for the Homepage Builder.
+const SECTIONS: Record<HomepageSectionKey, () => React.ReactNode> = {
+  hero: () => (
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+      <Hero className="lg:col-span-5" />
+      <HeroPreviews className="lg:col-span-4" />
+      <ProfileCard className="lg:col-span-3" />
+    </div>
+  ),
+  trends: () => (
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <TodaysTrend />
+      <TopHotCards />
+      <NewCardReveals />
+    </div>
+  ),
+  leakTimeline: () => <LeakTimeline />,
+  episodesTcg: () => (
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <EpisodeHub />
+      <TcgHub />
+    </div>
+  ),
+  marketMeta: () => (
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <MarketWatch />
+      <TopMeta />
+    </div>
+  ),
+  community: () => (
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <CommunityPredictions />
+      <LeakerAccuracy />
+      <DiscordCta />
+    </div>
+  ),
+  latestNews: () => <LatestNews />,
+}
+
+export const dynamic = 'force-dynamic'
+
+export default async function HomePage() {
+  const layout = await getHomepageConfig()
   return (
     <div className="mx-auto max-w-[1400px] space-y-4 px-4 py-5 sm:px-6">
-      {/* Row 1 — Hero / Previews / Profile */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-        <Hero className="lg:col-span-5" />
-        <HeroPreviews className="lg:col-span-4" />
-        <ProfileCard className="lg:col-span-3" />
-      </div>
-
-      {/* Row 2 — Trend rail widgets */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <TodaysTrend />
-        <TopHotCards />
-        <NewCardReveals />
-      </div>
-
-      {/* Row 3 — Leak Timeline */}
-      <LeakTimeline />
-
-      {/* Row 4 — Episode Hub / TCG Hub */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <EpisodeHub />
-        <TcgHub />
-      </div>
-
-      {/* Row 5 — Market Watch / Top Meta */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <MarketWatch />
-        <TopMeta />
-      </div>
-
-      {/* Row 6 — Community / Leaker Accuracy / Discord */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <CommunityPredictions />
-        <LeakerAccuracy />
-        <DiscordCta />
-      </div>
-
-      {/* Row 7 — Latest News */}
-      <LatestNews />
+      {layout
+        .filter((s) => s.visible)
+        .map((s) => (
+          <div key={s.key}>{SECTIONS[s.key]()}</div>
+        ))}
     </div>
   )
 }

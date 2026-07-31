@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-07-30T19:23:10.299Z",
+  "generatedAt": "2026-07-31T08:08:48.502Z",
   "stats": {
-    "files": 79,
+    "files": 81,
     "routes": 29,
     "clientComponents": 12,
-    "serverActions": 9
+    "serverActions": 10
   },
   "routes": [
     {
@@ -327,15 +327,16 @@
       "file": "src/app/(site)/page.tsx",
       "kind": "module",
       "exports": [
-        "HomePage",
+        "dynamic",
         "default"
       ],
       "imports": [
         "@/components/ui",
-        "@/lib/homepage-data"
+        "@/lib/homepage-data",
+        "@/lib/homepage-config"
       ],
       "route": "/",
-      "loc": 539
+      "loc": 549
     },
     {
       "file": "src/app/(site)/register/page.tsx",
@@ -692,18 +693,37 @@
       "loc": 29
     },
     {
+      "file": "src/app/admin/(dashboard)/homepage/actions.ts",
+      "kind": "server-action",
+      "exports": [
+        "toggleSection",
+        "moveSection",
+        "resetHomepage"
+      ],
+      "imports": [
+        "@/lib/db",
+        "@/lib/auth",
+        "@/lib/homepage-config"
+      ],
+      "route": null,
+      "loc": 57
+    },
+    {
       "file": "src/app/admin/(dashboard)/homepage/page.tsx",
       "kind": "module",
       "exports": [
         "metadata",
-        "HomepageBuilderPage",
         "default"
       ],
       "imports": [
-        "@/components/admin/admin-ui"
+        "@/components/admin/admin-ui",
+        "@/components/ui",
+        "@/lib/auth",
+        "@/lib/homepage-config",
+        "./actions"
       ],
       "route": "/admin/homepage",
-      "loc": 27
+      "loc": 126
     },
     {
       "file": "src/app/admin/(dashboard)/layout.tsx",
@@ -1208,6 +1228,7 @@
       "exports": [
         "SESSION_COOKIE",
         "SessionPayload",
+        "authConfigured",
         "hashPassword",
         "verifyPassword",
         "signSession",
@@ -1220,7 +1241,7 @@
       ],
       "imports": [],
       "route": null,
-      "loc": 81
+      "loc": 91
     },
     {
       "file": "src/lib/content.ts",
@@ -1254,6 +1275,22 @@
       "imports": [],
       "route": null,
       "loc": 22
+    },
+    {
+      "file": "src/lib/homepage-config.ts",
+      "kind": "module",
+      "exports": [
+        "HOMEPAGE_SECTIONS",
+        "HomepageSectionKey",
+        "HomepageSection",
+        "DEFAULT_HOMEPAGE",
+        "getHomepageConfig"
+      ],
+      "imports": [
+        "@/lib/db"
+      ],
+      "route": null,
+      "loc": 58
     },
     {
       "file": "src/lib/homepage-data.ts",
