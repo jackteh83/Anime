@@ -9,12 +9,16 @@ import {
   trendingCards,
   upcomingTournaments,
 } from '@/lib/section-data'
-import { marketWatch, tcgReleases } from '@/lib/homepage-data'
+import { marketWatch as seedMarket, tcgReleases } from '@/lib/homepage-data'
+import { getTopCards, getMarketMovers, formatPrice } from '@/lib/tcg-data'
 
 export const metadata: Metadata = {
   title: 'TCG Hub',
   description: 'Your ultimate destination for anime TCG news, cards, meta decks, and tournaments.',
 }
+
+// Rendered per-request: real card prices from the database.
+export const dynamic = 'force-dynamic'
 
 const tabs = [
   { label: 'Overview', href: '/tcg' },
@@ -25,7 +29,33 @@ const tabs = [
   { label: 'Tournaments', href: '/tcg/tournaments' },
 ]
 
-export default function TcgPage() {
+export default async function TcgPage() {
+  // Single source of truth: same real card data the homepage widgets read.
+  const topCards = await getTopCards(6)
+  const movers = await getMarketMovers(5)
+
+  const trending =
+    topCards.length > 0
+      ? topCards.map((c, i) => ({
+          rank: i + 1,
+          name: c.name,
+          code: c.code,
+          rarity: c.rarity || c.setName,
+          heat: formatPrice(c.price),
+          tone: c.tone,
+        }))
+      : trendingCards
+
+  const market =
+    movers.length > 0
+      ? movers.map((c) => ({
+          set: c.name,
+          sub: c.setName || c.rarity,
+          price: formatPrice(c.price),
+          change: c.priceChange,
+        }))
+      : seedMarket
+
   return (
     <div className="mx-auto max-w-[1400px] space-y-4 px-4 py-5 sm:px-6">
       <SectionHero
@@ -97,7 +127,7 @@ export default function TcgPage() {
         <Widget title="Market Watch" viewAllHref="/tcg/market">
           <table className="w-full text-sm">
             <tbody>
-              {marketWatch.map((m) => (
+              {market.map((m) => (
                 <tr key={m.set} className="border-b border-line last:border-0">
                   <td className="py-2.5">
                     <div className="flex items-center gap-2">
@@ -135,7 +165,7 @@ export default function TcgPage() {
         {/* Trending cards */}
         <Widget title="Trending Cards" viewAllHref="/tcg">
           <ul className="space-y-3">
-            {trendingCards.map((c) => (
+            {trending.map((c) => (
               <li key={c.rank} className="flex items-center gap-3">
                 <span className="w-5 text-sm font-extrabold text-primary">
                   {String(c.rank).padStart(2, '0')}

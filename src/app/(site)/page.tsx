@@ -13,6 +13,7 @@ import { Pill, StatChange, Thumb, Widget } from '@/components/ui'
 import * as data from '@/lib/homepage-data'
 import { getHomepageConfig, type HomepageSectionKey } from '@/lib/homepage-config'
 import { getLatestNews } from '@/lib/news-data'
+import { getTopCards, getMarketMovers, formatPrice } from '@/lib/tcg-data'
 
 // Each homepage section (row) as a renderer, keyed for the Homepage Builder.
 const SECTIONS: Record<HomepageSectionKey, () => React.ReactNode> = {
@@ -209,7 +210,26 @@ function TodaysTrend() {
   )
 }
 
-function TopHotCards() {
+async function TopHotCards() {
+  // Same DB the /tcg page reads — top rows by real market price. Falls back to
+  // placeholder copy only when no cards have been ingested yet.
+  const live = await getTopCards(5)
+  const items =
+    live.length > 0
+      ? live.map((c) => ({
+          name: c.name,
+          sub: c.setName || c.rarity || c.code,
+          right: formatPrice(c.price),
+          change: c.priceChange,
+          tone: c.tone,
+        }))
+      : data.topHotCards.map((c) => ({
+          name: c.name,
+          sub: c.rank,
+          right: '',
+          change: c.change,
+          tone: c.tone,
+        }))
   return (
     <Widget
       title="Top Hot Cards"
@@ -217,16 +237,21 @@ function TopHotCards() {
       viewAllHref="/tcg"
     >
       <ul className="space-y-3">
-        {data.topHotCards.map((c) => (
+        {items.map((c) => (
           <li key={c.name} className="flex items-center gap-3">
             <Thumb tone={c.tone} size="sm" />
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-text">
                 {c.name}
               </p>
-              <p className="text-xs text-faint">{c.rank}</p>
+              <p className="truncate text-xs text-faint">{c.sub}</p>
             </div>
-            <StatChange value={c.change} />
+            <div className="shrink-0 text-right">
+              {c.right && (
+                <p className="text-sm font-bold text-text">{c.right}</p>
+              )}
+              <StatChange value={c.change} />
+            </div>
           </li>
         ))}
       </ul>
@@ -378,19 +403,30 @@ function TcgHub() {
   )
 }
 
-function MarketWatch() {
+async function MarketWatch() {
+  // Same real card movers the /tcg Market Watch shows. Fallback to seed copy.
+  const movers = await getMarketMovers(4)
+  const rows =
+    movers.length > 0
+      ? movers.map((c) => ({
+          set: c.name,
+          sub: c.setName || c.rarity,
+          price: formatPrice(c.price),
+          change: c.priceChange,
+        }))
+      : data.marketWatch
   return (
     <Widget title="TCG Market Watch" viewAllHref="/tcg/market" viewAllLabel="View Market">
       <table className="w-full text-sm">
         <thead>
           <tr className="text-left text-[11px] uppercase tracking-wide text-faint">
-            <th className="pb-2 font-semibold">Set</th>
-            <th className="pb-2 text-right font-semibold">Avg Price</th>
+            <th className="pb-2 font-semibold">Card</th>
+            <th className="pb-2 text-right font-semibold">Market Price</th>
             <th className="pb-2 text-right font-semibold">Change</th>
           </tr>
         </thead>
         <tbody>
-          {data.marketWatch.map((m) => (
+          {rows.map((m) => (
             <tr key={m.set} className="border-t border-line">
               <td className="py-2.5">
                 <div className="flex items-center gap-2">

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { ingestAllRss } from '@/lib/ingest/run'
+import { ingestAllRss, ingestPokemonCards } from '@/lib/ingest/run'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -19,7 +19,9 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const results = await ingestAllRss()
+    const rss = await ingestAllRss()
+    const cards = await ingestPokemonCards()
+    const results = [...rss, cards]
     const total = results.reduce((n, r) => n + r.inserted, 0)
     return NextResponse.json({ ok: true, inserted: total, results })
   } catch (err) {

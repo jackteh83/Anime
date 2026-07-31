@@ -2,6 +2,7 @@ import 'server-only'
 import { prisma } from '@/lib/db'
 import { slugify } from '@/lib/slug'
 import { fetchFeed } from './rss'
+import { fetchPokemonCards } from './tcg'
 
 export type IngestResult = {
   source: string
@@ -70,4 +71,68 @@ export async function ingestAllRss(): Promise<IngestResult[]> {
   }
 
   return results
+}
+
+/**
+ * Ingest real Pokémon TCG cards + market prices into the Card table under the
+ * seeded "Pokémon" game. Upserts by (gameId, code) so re-running refreshes
+ * prices in place and computes priceChange from the previous stored price.
+ */
+export async function ingestPokemonCards(): Promise<IngestResult> {
+  const label = 'Pokémon TCG'
+  try {
+    const game = await prisma.tcgGame.findUnique({ where: { slug: 'pokemon' } })
+    if (!game) return { source: label, inserted: 0, error: 'game not seeded' }
+
+    const cards = await fetchPokemonCards(50)
+    let processed = 0
+
+    for (const c of cards) {
+      const existing = await prisma.card.findUnique({
+        where: { gameId_code: { gameId: game.id, code: c.code } },
+        select: { marketPrice: true },
+      })
+
+      let priceChange = 0
+      if (existing?.marketPrice != null && c.marketPrice != null) {
+        const prev = Number(existing.marketPrice)
+        if (prev > 0) {
+          priceChange = Number((((c.marketPrice - prev) / prev) * 100).toFixed(2))
+        }
+      }
+
+      await prisma.card.upsert({
+        where: { gameId_code: { gameId: game.id, code: c.code } },
+        update: {
+          name: c.name,
+          rarity: c.rarity,
+          setName: c.setName,
+          imageUrl: c.imageUrl,
+          marketPrice: c.marketPrice,
+          priceChange,
+          releaseDate: c.releaseDate,
+        },
+        create: {
+          gameId: game.id,
+          code: c.code,
+          name: c.name,
+          rarity: c.rarity,
+          setName: c.setName,
+          imageUrl: c.imageUrl,
+          marketPrice: c.marketPrice,
+          priceChange,
+          releaseDate: c.releaseDate,
+        },
+      })
+      processed++
+    }
+
+    return { source: label, inserted: processed }
+  } catch (err) {
+    return {
+      source: label,
+      inserted: 0,
+      error: err instanceof Error ? err.message : 'fetch failed',
+    }
+  }
 }

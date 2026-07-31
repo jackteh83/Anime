@@ -3,7 +3,7 @@ import { Rss, Plus, Trash2 } from 'lucide-react'
 import { AdminPageHeader, Panel } from '@/components/admin/admin-ui'
 import { Pill } from '@/components/ui'
 import { prisma } from '@/lib/db'
-import { FetchNow } from './fetch-now'
+import { CollectPanel } from './fetch-now'
 import { addSourceAction, toggleSourceAction, deleteSourceAction } from './actions'
 
 export const metadata: Metadata = { title: 'Content Sources' }
@@ -30,17 +30,26 @@ export default async function SourcesPage() {
   const publishedNews = await prisma.news
     .count({ where: { status: 'PUBLISHED', deletedAt: null } })
     .catch(() => 0)
+  const cardCount = await prisma.card
+    .count({ where: { deletedAt: null } })
+    .catch(() => 0)
 
   return (
     <div>
       <AdminPageHeader
         title="Content Sources"
-        subtitle="Collect step — real, free RSS feeds ingested into News"
+        subtitle="Collect step — real, free feeds ingested into News + TCG cards"
         icon={Rss}
+        action={
+          <span className="text-xs text-faint">
+            {publishedNews} article{publishedNews === 1 ? '' : 's'} · {cardCount} card
+            {cardCount === 1 ? '' : 's'}
+          </span>
+        }
       />
 
       <Panel title="Collect now" className="mb-4">
-        <FetchNow />
+        <CollectPanel />
       </Panel>
 
       <Panel

@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { getSession } from '@/lib/auth'
-import { ingestAllRss } from '@/lib/ingest/run'
+import { ingestAllRss, ingestPokemonCards } from '@/lib/ingest/run'
 
 async function requireSession() {
   const session = await getSession()
@@ -33,6 +33,24 @@ export async function fetchNowAction(
     revalidatePath('/news')
     revalidatePath('/')
     return { ok: true, inserted, detail: results }
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : 'Fetch failed' }
+  }
+}
+
+/** Manually refresh real TCG card prices now (mirrors the daily cron). */
+export async function fetchCardsAction(
+  _prev: FetchState,
+  _formData: FormData,
+): Promise<FetchState> {
+  await requireSession()
+  try {
+    const result = await ingestPokemonCards()
+    revalidatePath('/admin/sources')
+    revalidatePath('/tcg')
+    revalidatePath('/')
+    if (result.error) return { ok: false, error: `${result.source}: ${result.error}` }
+    return { ok: true, inserted: result.inserted, detail: [result] }
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : 'Fetch failed' }
   }

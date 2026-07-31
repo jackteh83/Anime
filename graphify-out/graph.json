@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-07-31T09:12:22.819Z",
+  "generatedAt": "2026-07-31T10:19:20.160Z",
   "stats": {
-    "files": 96,
+    "files": 98,
     "routes": 31,
     "clientComponents": 14,
     "serverActions": 12
@@ -358,10 +358,11 @@
         "@/components/ui",
         "@/lib/homepage-data",
         "@/lib/homepage-config",
-        "@/lib/news-data"
+        "@/lib/news-data",
+        "@/lib/tcg-data"
       ],
       "route": "/",
-      "loc": 557
+      "loc": 593
     },
     {
       "file": "src/app/(site)/register/page.tsx",
@@ -396,17 +397,18 @@
       "kind": "module",
       "exports": [
         "metadata",
-        "TcgPage",
+        "dynamic",
         "default"
       ],
       "imports": [
         "@/components/section-hero",
         "@/components/ui",
         "@/lib/section-data",
-        "@/lib/homepage-data"
+        "@/lib/homepage-data",
+        "@/lib/tcg-data"
       ],
       "route": "/tcg",
-      "loc": 179
+      "loc": 209
     },
     {
       "file": "src/app/(site)/trends/page.tsx",
@@ -941,6 +943,7 @@
       "exports": [
         "FetchState",
         "fetchNowAction",
+        "fetchCardsAction",
         "addSourceAction",
         "toggleSourceAction",
         "deleteSourceAction"
@@ -951,19 +954,19 @@
         "@/lib/ingest/run"
       ],
       "route": null,
-      "loc": 81
+      "loc": 99
     },
     {
       "file": "src/app/admin/(dashboard)/sources/fetch-now.tsx",
       "kind": "client",
       "exports": [
-        "FetchNow"
+        "CollectPanel"
       ],
       "imports": [
         "./actions"
       ],
       "route": null,
-      "loc": 63
+      "loc": 86
     },
     {
       "file": "src/app/admin/(dashboard)/sources/page.tsx",
@@ -981,7 +984,7 @@
         "./actions"
       ],
       "route": "/admin/sources",
-      "loc": 150
+      "loc": 159
     },
     {
       "file": "src/app/admin/(dashboard)/users/actions.ts",
@@ -1082,7 +1085,7 @@
         "@/lib/ingest/run"
       ],
       "route": null,
-      "loc": 32
+      "loc": 34
     },
     {
       "file": "src/app/api/cron/publish/route.ts",
@@ -1494,15 +1497,28 @@
       "kind": "module",
       "exports": [
         "IngestResult",
-        "ingestAllRss"
+        "ingestAllRss",
+        "ingestPokemonCards"
       ],
       "imports": [
         "@/lib/db",
         "@/lib/slug",
-        "./rss"
+        "./rss",
+        "./tcg"
       ],
       "route": null,
-      "loc": 74
+      "loc": 139
+    },
+    {
+      "file": "src/lib/ingest/tcg.ts",
+      "kind": "module",
+      "exports": [
+        "CardItem",
+        "fetchPokemonCards"
+      ],
+      "imports": [],
+      "route": null,
+      "loc": 92
     },
     {
       "file": "src/lib/nav.ts",
@@ -1614,6 +1630,22 @@
       "imports": [],
       "route": null,
       "loc": 17
+    },
+    {
+      "file": "src/lib/tcg-data.ts",
+      "kind": "module",
+      "exports": [
+        "CardRow",
+        "formatPrice",
+        "getTopCards",
+        "getMarketMovers"
+      ],
+      "imports": [
+        "@/lib/db",
+        "@/components/ui"
+      ],
+      "route": null,
+      "loc": 78
     }
   ]
 }
