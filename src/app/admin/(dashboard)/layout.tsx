@@ -3,6 +3,9 @@ import { getSession, isStaff } from '@/lib/auth'
 import { AdminSidebar } from '@/components/admin/admin-sidebar'
 import { AdminTopbar } from '@/components/admin/admin-topbar'
 
+// The CMS renders per-request against the live database and session.
+export const dynamic = 'force-dynamic'
+
 // Real authorization for the CMS. proxy.ts does the optimistic cookie check;
 // here we verify the JWT and the staff role on every render.
 export default async function AdminDashboardLayout({

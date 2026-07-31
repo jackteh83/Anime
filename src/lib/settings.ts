@@ -23,6 +23,14 @@ export type AdsSettings = {
   footer: boolean
 }
 
+export type SeoSettings = {
+  metaTitleTemplate: string // e.g. "%s · Anisekai"
+  defaultDescription: string
+  keywords: string
+  ogImageUrl: string
+  robotsAllow: boolean // false = discourage indexing (staging)
+}
+
 export const SETTING_DEFAULTS = {
   general: {
     siteName: 'Anisekai',
@@ -42,6 +50,14 @@ export const SETTING_DEFAULTS = {
     articlePages: false,
     footer: false,
   } satisfies AdsSettings,
+  seo: {
+    metaTitleTemplate: '%s · Anisekai',
+    defaultDescription:
+      'AI-powered Anime & Trading Card Game (TCG) intelligence: leaks, episodes, TCG market, trends and news, updated daily.',
+    keywords: 'anime, manga, leaks, TCG, One Piece, trading card game, episodes, trends',
+    ogImageUrl: '',
+    robotsAllow: true,
+  } satisfies SeoSettings,
 }
 
 export type SettingKey = keyof typeof SETTING_DEFAULTS

@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-07-31T08:08:48.502Z",
+  "generatedAt": "2026-07-31T08:17:20.213Z",
   "stats": {
-    "files": 81,
+    "files": 85,
     "routes": 29,
-    "clientComponents": 12,
+    "clientComponents": 13,
     "serverActions": 10
   },
   "routes": [
@@ -455,14 +455,16 @@
       "kind": "module",
       "exports": [
         "metadata",
-        "AnalyticsPage",
         "default"
       ],
       "imports": [
-        "@/components/admin/admin-ui"
+        "@/components/admin/admin-ui",
+        "@/components/ui",
+        "@/lib/db",
+        "@/lib/content"
       ],
       "route": "/admin/analytics",
-      "loc": 27
+      "loc": 139
     },
     {
       "file": "src/app/admin/(dashboard)/content/[id]/page.tsx",
@@ -729,6 +731,7 @@
       "file": "src/app/admin/(dashboard)/layout.tsx",
       "kind": "module",
       "exports": [
+        "dynamic",
         "default"
       ],
       "imports": [
@@ -737,7 +740,7 @@
         "@/components/admin/admin-topbar"
       ],
       "route": null,
-      "loc": 26
+      "loc": 29
     },
     {
       "file": "src/app/admin/(dashboard)/media/actions.ts",
@@ -818,14 +821,29 @@
       "kind": "module",
       "exports": [
         "metadata",
-        "SeoPage",
         "default"
       ],
       "imports": [
-        "@/components/admin/admin-ui"
+        "@/components/admin/admin-ui",
+        "@/lib/auth",
+        "@/lib/settings",
+        "./seo-form"
       ],
       "route": "/admin/seo",
-      "loc": 27
+      "loc": 52
+    },
+    {
+      "file": "src/app/admin/(dashboard)/seo/seo-form.tsx",
+      "kind": "client",
+      "exports": [
+        "SeoForm"
+      ],
+      "imports": [
+        "@/lib/settings",
+        "../settings/actions"
+      ],
+      "route": null,
+      "loc": 60
     },
     {
       "file": "src/app/admin/(dashboard)/settings/actions.ts",
@@ -834,7 +852,8 @@
         "SettingsState",
         "saveGeneral",
         "saveLocalization",
-        "saveAds"
+        "saveAds",
+        "saveSeo"
       ],
       "imports": [
         "@/lib/db",
@@ -842,7 +861,7 @@
         "@/lib/settings"
       ],
       "route": null,
-      "loc": 88
+      "loc": 111
     },
     {
       "file": "src/app/admin/(dashboard)/settings/page.tsx",
@@ -972,6 +991,34 @@
       ],
       "imports": [
         "./globals.css"
+      ],
+      "route": null,
+      "loc": 29
+    },
+    {
+      "file": "src/app/robots.ts",
+      "kind": "module",
+      "exports": [
+        "dynamic",
+        "default"
+      ],
+      "imports": [
+        "@/lib/settings",
+        "@/lib/site-url"
+      ],
+      "route": null,
+      "loc": 21
+    },
+    {
+      "file": "src/app/sitemap.ts",
+      "kind": "module",
+      "exports": [
+        "dynamic",
+        "default"
+      ],
+      "imports": [
+        "@/lib/settings",
+        "@/lib/site-url"
       ],
       "route": null,
       "loc": 29
@@ -1366,6 +1413,7 @@
         "GeneralSettings",
         "LocalizationSettings",
         "AdsSettings",
+        "SeoSettings",
         "SETTING_DEFAULTS",
         "SettingKey",
         "getSettings"
@@ -1374,7 +1422,17 @@
         "@/lib/db"
       ],
       "route": null,
-      "loc": 60
+      "loc": 76
+    },
+    {
+      "file": "src/lib/site-url.ts",
+      "kind": "module",
+      "exports": [
+        "siteBaseUrl"
+      ],
+      "imports": [],
+      "route": null,
+      "loc": 13
     },
     {
       "file": "src/lib/slug.ts",

@@ -85,3 +85,26 @@ export async function saveAds(
     return { error: e instanceof Error ? e.message : 'Save failed' }
   }
 }
+
+export async function saveSeo(
+  _prev: SettingsState,
+  formData: FormData,
+): Promise<SettingsState> {
+  const session = await getSession()
+  if (!session) redirect('/admin/login')
+  if (!MANAGER_ROLES.includes(session.role)) return { error: 'Not permitted' }
+
+  const value = {
+    metaTitleTemplate: (formData.get('metaTitleTemplate') as string)?.trim() || '%s · Anisekai',
+    defaultDescription: (formData.get('defaultDescription') as string)?.trim() ?? '',
+    keywords: (formData.get('keywords') as string)?.trim() ?? '',
+    ogImageUrl: (formData.get('ogImageUrl') as string)?.trim() ?? '',
+    robotsAllow: formData.get('robotsAllow') === 'on',
+  }
+  try {
+    await upsert('seo', value)
+    return { ok: 'SEO settings saved.' }
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Save failed' }
+  }
+}
